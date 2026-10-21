@@ -16,6 +16,8 @@ Commands:
     figmosha rm <id> [<id> ...]       # remove one or more nodes
     figmosha import-component <key>   # import library component, instantiate, focus
     figmosha "<js>"                   # shorthand for `exec`
+    figmosha fill <id> "#ff0000" ...  # + ~60 commands ported from figma-console-mcp
+                                      #   (figmosha_ext/, docs/console-mcp-analysis.md)
 
 Anywhere a node id is taken, `page` (current page) and `sel` (first selected
 node) work too. Bridge address comes from FIGMOSHA_HOST / FIGMOSHA_PORT.
@@ -58,6 +60,14 @@ KNOWN_CMDS = {
     "exec", "status", "targets", "clear", "doctor", "sel", "tree", "find", "text", "variant",
     "clone", "rm", "import-component", "icomp",
 }
+
+# Commands generated from figma-console-mcp (tools/convert_console_mcp.py).
+# Optional: a missing or broken figmosha_ext never takes the core CLI down.
+try:
+    import figmosha_ext
+    KNOWN_CMDS |= figmosha_ext.names()
+except Exception as _ext_error:  # pragma: no cover - only when the module is broken
+    figmosha_ext = None
 
 
 def force_utf8_output():
@@ -512,7 +522,16 @@ def build_parser():
         _add_common_flags(p)
         p.add_argument("key")
 
+    if figmosha_ext is not None:
+        figmosha_ext.add_subparsers(sub, _add_common_flags_ext)
+
     return ap
+
+
+def _add_common_flags_ext(p):
+    _add_common_flags(p)
+    p.add_argument("--print-js", action="store_true",
+                   help="print the generated Plugin API code instead of running it")
 
 
 def main():
@@ -540,6 +559,9 @@ def main():
     PARALLEL = getattr(args, "parallel", False)
     AGENT = getattr(args, "agent", None) or AGENT
     QUEUE_TIMEOUT = getattr(args, "queue_timeout", None)
+
+    if figmosha_ext is not None and figmosha_ext.is_ext(args):
+        sys.exit(figmosha_ext.run(args, _exec, _emit))
 
     dispatch = {
         "status": cmd_status,

@@ -1,0 +1,2567 @@
+[
+ {
+  "name": "figma_get_console_logs",
+  "category": "LOCAL",
+  "file": "src/local.ts",
+  "line": 450,
+  "handler_lines": 101,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "getConsoleLogs"
+  ],
+  "note": "wsServer.getConsoleLogs(): MCP-side buffer of plugin console.* (pushed as CONSOLE_CAPTURE)",
+  "description": "Retrieve console logs from Figma Desktop. FOR PLUGIN DEVELOPERS: This works immediately - no navigation needed! Just check logs, run your plugin in Figma Desktop, check logs again. All plugin logs ([Main], [Swapper], etc.) appear instantly."
+ },
+ {
+  "name": "figma_take_screenshot",
+  "category": "HYBRID",
+  "file": "src/local.ts",
+  "line": 556,
+  "handler_lines": 239,
+  "connector_methods": [
+   "captureScreenshot"
+  ],
+  "plugin_commands": [
+   "CAPTURE_SCREENSHOT"
+  ],
+  "plugin_handler_lines": {
+   "CAPTURE_SCREENSHOT": 3768
+  },
+  "execute_code": false,
+  "rest_methods": [
+   "getImages"
+  ],
+  "rest_endpoints": [
+   "/images/${fileKey}"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Export an image of the current Figma page or specific node. Uses the Desktop Bridge plugin (exportAsync) when connected — works on any plan, no REST token needed, reflects current runtime state. Falls back to the Figma REST API when the bridge is unavailable or for PDF format. Use for visual validation after design changes — check alignment, spacing, proportions. Pass nodeId to target specific elements. For components, prefer figma_get_component_image."
+ },
+ {
+  "name": "figma_watch_console",
+  "category": "LOCAL",
+  "file": "src/local.ts",
+  "line": 797,
+  "handler_lines": 63,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "getConsoleLogs"
+  ],
+  "note": "polls the MCP-side console buffer",
+  "description": "Stream console logs in real-time for a specified duration (max 5 minutes). Use for monitoring plugin execution while user tests manually. Returns all logs captured during watch period with summary statistics. NOT for retrieving past logs (use figma_get_console_logs). Best for: watching plugin output during manual testing, debugging race conditions, monitoring async operations."
+ },
+ {
+  "name": "figma_reload_plugin",
+  "category": "PLUGIN",
+  "file": "src/local.ts",
+  "line": 862,
+  "handler_lines": 79,
+  "connector_methods": [],
+  "plugin_commands": [
+   "RELOAD_UI"
+  ],
+  "plugin_handler_lines": {
+   "RELOAD_UI": 3985
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "clearConsoleLogs"
+  ],
+  "note": "",
+  "description": "Reload the current Figma page/plugin to test code changes. Optionally clears console logs before reload. Use when user says: 'reload plugin', 'refresh page', 'restart plugin', 'test my changes'. Returns reload confirmation and current URL. Best for rapid iteration during plugin development."
+ },
+ {
+  "name": "figma_clear_console",
+  "category": "LOCAL",
+  "file": "src/local.ts",
+  "line": 943,
+  "handler_lines": 61,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "clearConsoleLogs"
+  ],
+  "note": "wsServer.clearConsoleLogs()",
+  "description": "Clear the console log buffer. Safely clears the buffer without disrupting the connection. Returns number of logs cleared."
+ },
+ {
+  "name": "figma_navigate",
+  "category": "LOCAL",
+  "file": "src/local.ts",
+  "line": 1006,
+  "handler_lines": 166,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "switches the active file among connected plugin sockets (wsServer.getConnectedFiles)",
+  "description": "Switch the active Figma file target among files that already have the Desktop Bridge plugin running. Local mode is WebSocket-only — this tool does NOT launch a browser or open files. If the requested URL is already the active file, it confirms the connection. If another connected plugin matches the URL, it switches the active target so subsequent tool calls hit that file. If no connected plugin matches, returns guidance for the user to open the Desktop Bridge plugin in the target file. Use figma_list_open_files to see all connected files.\n\nPass lock: true to PIN this file as the target — new connections, reconnects, and the user's own selection/page changes in other files will no longer move the target. Use this for parallel work (agent edits one file while the user works in another) so commands can't silently route to the wrong file. Switching to another file (or lock: false) releases the pin; it also releases automatically if the pinned file disconnects."
+ },
+ {
+  "name": "figma_get_status",
+  "category": "PLUGIN",
+  "file": "src/local.ts",
+  "line": 1174,
+  "handler_lines": 234,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [
+   "GET_FILE_INFO"
+  ],
+  "plugin_handler_lines": {
+   "GET_FILE_INFO": 3938
+  },
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "connection state + GET_FILE_INFO / EXECUTE_CODE probe",
+  "description": "Check connection status to Figma Desktop. Reports transport status and connection health via the Desktop Bridge plugin (WebSocket transport). Use probe:true for an active roundtrip verification that the plugin is actually responding."
+ },
+ {
+  "name": "figma_reconnect",
+  "category": "PLUGIN",
+  "file": "src/local.ts",
+  "line": 1414,
+  "handler_lines": 106,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [
+   "RELOAD_UI"
+  ],
+  "plugin_handler_lines": {
+   "RELOAD_UI": 3985
+  },
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Force a complete reconnection to Figma Desktop. Use when connection seems stale or after switching files."
+ },
+ {
+  "name": "figma_get_selection",
+  "category": "PLUGIN",
+  "file": "src/local.ts",
+  "line": 1526,
+  "handler_lines": 103,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Get the currently selected nodes in Figma. Returns node IDs, names, types, and dimensions. WebSocket-only — requires Desktop Bridge plugin. Use this to understand what the user is pointing at instead of asking them to describe it."
+ },
+ {
+  "name": "figma_get_design_changes",
+  "category": "LOCAL",
+  "file": "src/local.ts",
+  "line": 1631,
+  "handler_lines": 82,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "getDocumentChanges"
+  ],
+  "note": "wsServer.getDocumentChanges(): buffered documentchange events pushed by the plugin",
+  "description": "Get recent document changes detected in Figma. Returns buffered change events including which nodes changed, whether styles were modified, and change counts. WebSocket-only — events are captured via Desktop Bridge plugin. Use this to understand what changed since you last checked."
+ },
+ {
+  "name": "figma_list_open_files",
+  "category": "LOCAL",
+  "file": "src/local.ts",
+  "line": 1715,
+  "handler_lines": 62,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "List all Figma files currently connected via the Desktop Bridge plugin. Shows which files have the plugin open and which one is the active target for tool calls. Use figma_navigate to switch between files. WebSocket multi-client mode — each file with the Desktop Bridge plugin maintains its own connection."
+ },
+ {
+  "name": "figma_get_design_system_summary",
+  "category": "PLUGIN",
+  "file": "src/local.ts",
+  "line": 1963,
+  "handler_lines": 237,
+  "connector_methods": [
+   "getVariables",
+   "getLocalComponents"
+  ],
+  "plugin_commands": [
+   "GET_LOCAL_COMPONENTS"
+  ],
+  "plugin_handler_lines": {
+   "GET_LOCAL_COMPONENTS": 1692
+  },
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Get a compact overview of the design system. Returns categories, component counts, and token collection names WITHOUT full details. Use this first to understand what's available, then use figma_search_components to find specific components. This tool is optimized for minimal token usage."
+ },
+ {
+  "name": "figma_search_components",
+  "category": "HYBRID",
+  "file": "src/local.ts",
+  "line": 2202,
+  "handler_lines": 295,
+  "connector_methods": [
+   "getVariables",
+   "getLocalComponents"
+  ],
+  "plugin_commands": [
+   "GET_LOCAL_COMPONENTS"
+  ],
+  "plugin_handler_lines": {
+   "GET_LOCAL_COMPONENTS": 1692
+  },
+  "execute_code": true,
+  "rest_methods": [
+   "getComponents"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/components"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Search for components by name, category, or description. Returns paginated results with component keys for instantiation. Automatically loads the design system cache if needed.\n\n**NEW: Cross-file library search!** Pass a libraryFileKey or libraryFileUrl to search for components in a published shared library (different file). This uses the REST API and requires FIGMA_ACCESS_TOKEN.\n\nWithout libraryFileKey/libraryFileUrl, searches the currently open file (local components via Plugin API)."
+ },
+ {
+  "name": "figma_get_component_details",
+  "category": "PLUGIN",
+  "file": "src/local.ts",
+  "line": 2499,
+  "handler_lines": 139,
+  "connector_methods": [
+   "getVariables",
+   "getLocalComponents"
+  ],
+  "plugin_commands": [
+   "GET_LOCAL_COMPONENTS"
+  ],
+  "plugin_handler_lines": {
+   "GET_LOCAL_COMPONENTS": 1692
+  },
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "ensureDesignSystemCache() -> connector.getVariables (EXECUTE_CODE) + getLocalComponents (GET_LOCAL_COMPONENTS)",
+  "description": "Get full details for a specific component including all variants, properties, and keys needed for instantiation. Use the component key or name from figma_search_components."
+ },
+ {
+  "name": "figma_get_token_values",
+  "category": "PLUGIN",
+  "file": "src/local.ts",
+  "line": 2640,
+  "handler_lines": 115,
+  "connector_methods": [
+   "getVariables",
+   "getLocalComponents"
+  ],
+  "plugin_commands": [
+   "GET_LOCAL_COMPONENTS"
+  ],
+  "plugin_handler_lines": {
+   "GET_LOCAL_COMPONENTS": 1692
+  },
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "ensureDesignSystemCache() -> connector.getVariables + getLocalComponents",
+  "description": "Get actual values for design tokens (colors, spacing, etc). Use after figma_get_design_system_summary to get specific token values for implementation."
+ },
+ {
+  "name": "figma_get_library_components",
+  "category": "REST",
+  "file": "src/local.ts",
+  "line": 2757,
+  "handler_lines": 324,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getComponents",
+   "getComponentSets"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/components",
+   "/files/${fileKey}/component_sets"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Discover published components from a shared/team library file.\n\n**USE THIS when you need to use components from a published design system library** (a different file than the one currently open). This bridges the gap between library discovery and instantiation.\n\n**WORKFLOW:**\n1. Call this tool with the library file's URL or file key\n2. Browse the returned components — results include COMPONENT_SET (with variants array) and standalone COMPONENT types\n3. Use figma_instantiate_component with a VARIANT key (from the variants array inside a COMPONENT_SET result, NOT the component set key itself)\n\n**SEARCH NOTE:** The query filter matches both component names AND descriptions. If you get unexpected results (e.g., \"Accordion\" when searching \"Button\"), verify the result name matches what you need — it may have matched on a description mention.\n\n**MULTI-FILE TIP:** If you need to find a specific component and REST API search returns too many results, you can switch to the library file via figma_navigate, use figma_execute to find the exact component and its variant key, then switch back.\n\n**NOTE:** Requires FIGMA_ACCESS_TOKEN to be set (uses the Figma REST API to read the library file)."
+ },
+ {
+  "name": "figma_scan_code_accessibility",
+  "category": "LOCAL",
+  "file": "src/core/accessibility-tools.ts",
+  "line": 328,
+  "handler_lines": 82,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "axe",
+   "jsdom"
+  ],
+  "note": "",
+  "description": "Scan HTML code for accessibility violations using axe-core (Deque). Runs structural/semantic checks via JSDOM: ARIA attributes, roles, labels, alt text, form labels, heading order, landmarks, semantic HTML, tabindex, duplicate IDs, lang attribute, and ~50 more rules. Visual checks (color contrast, focus visibility) are disabled in this mode — use figma_lint_design for visual a11y on the design side. Also surfaces a WCAG 1.4.12 (Text Spacing) / 1.4.4 (Resize Text) advisory when typography is locked to fixed px units — the code side is where text-spacing override support is actually verified (a sub-1.5 line height in a design is not itself a failure). Together, these two tools provide full-spectrum accessibility coverage across design and code. Pass component HTML directly or use with figma_check_design_parity for design-to-code a11y comparison. No Figma connection required — this is a standalone code analysis tool."
+ },
+ {
+  "name": "figma_get_annotations",
+  "category": "PLUGIN",
+  "file": "src/core/annotation-tools.ts",
+  "line": 97,
+  "handler_lines": 62,
+  "connector_methods": [
+   "getAnnotations"
+  ],
+  "plugin_commands": [
+   "GET_ANNOTATIONS"
+  ],
+  "plugin_handler_lines": {
+   "GET_ANNOTATIONS": 2454
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Read annotations from a Figma node. Annotations are designer-authored specs attached to nodes — they can include notes (plain text or markdown), pinned design properties (fills, width, fontSize, etc.), and category labels. Use this to discover animation timings, interaction specs, accessibility requirements, and other implementation details that designers annotate directly on the design. Set include_children=true to get annotations from child nodes too (useful for full component documentation). Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_set_annotations",
+  "category": "PLUGIN",
+  "file": "src/core/annotation-tools.ts",
+  "line": 163,
+  "handler_lines": 67,
+  "connector_methods": [
+   "setAnnotations"
+  ],
+  "plugin_commands": [
+   "SET_ANNOTATIONS"
+  ],
+  "plugin_handler_lines": {
+   "SET_ANNOTATIONS": 2569
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Write or clear annotations on a Figma node. Annotations communicate design specs to developers — use them to document animation timings, easing curves, interaction behaviors, accessibility requirements, and implementation notes. Supports plain text labels, rich markdown labels, pinned design properties, and annotation categories. Pass an empty array to clear all annotations. Use mode='append' to add to existing annotations, or mode='replace' (default) to overwrite. Requires Desktop Bridge plugin. This operation is undoable in Figma (Cmd+Z)."
+ },
+ {
+  "name": "figma_get_annotation_categories",
+  "category": "PLUGIN",
+  "file": "src/core/annotation-tools.ts",
+  "line": 234,
+  "handler_lines": 45,
+  "connector_methods": [
+   "getAnnotationCategories"
+  ],
+  "plugin_commands": [
+   "GET_ANNOTATION_CATEGORIES"
+  ],
+  "plugin_handler_lines": {
+   "GET_ANNOTATION_CATEGORIES": 2666
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "List available annotation categories in the current Figma file. Categories group annotations by purpose (e.g., interactions, accessibility, development notes). Use the returned category IDs when creating annotations with figma_set_annotations. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_get_comments",
+  "category": "REST",
+  "file": "src/core/comment-tools.ts",
+  "line": 29,
+  "handler_lines": 103,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getComments"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/comments${query}"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Get comments on a Figma file. Returns comment threads with author, message, timestamps, and pinned node locations. Use include_resolved to also see resolved comments."
+ },
+ {
+  "name": "figma_post_comment",
+  "category": "REST",
+  "file": "src/core/comment-tools.ts",
+  "line": 136,
+  "handler_lines": 122,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "postComment"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/comments"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Post a comment on a Figma file, optionally pinned to a specific design node. Use after figma_check_design_parity to notify designers of drift when code is the canonical source. Supports replies to existing comment threads. Limitation: @mentions are a Figma UI-only feature — including '@name' in the message renders as plain text, not a clickable mention tag, and does not trigger Figma notifications."
+ },
+ {
+  "name": "figma_delete_comment",
+  "category": "REST",
+  "file": "src/core/comment-tools.ts",
+  "line": 262,
+  "handler_lines": 83,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "deleteComment"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/comments/${commentId}"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Delete a comment from a Figma file by its comment ID. Use figma_get_comments to find comment IDs first."
+ },
+ {
+  "name": "figma_get_component_for_development_deep",
+  "category": "PLUGIN",
+  "file": "src/core/deep-component-tools.ts",
+  "line": 24,
+  "handler_lines": 76,
+  "connector_methods": [
+   "deepGetComponent"
+  ],
+  "plugin_commands": [
+   "DEEP_GET_COMPONENT"
+  ],
+  "plugin_handler_lines": {
+   "DEEP_GET_COMPONENT": 1429
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Get a deeply nested component tree with full visual properties, resolved design token names, instance references, prototype interactions, and annotations at every level. Uses the Desktop Bridge Plugin API for unlimited depth traversal — essential for complex components like data tables, nested menus, date pickers, and compound form fields where the standard depth-4 REST API tool misses deeper structure. Returns boundVariables resolved to actual token names (not just IDs), mainComponent references for INSTANCE nodes, and reactions for interaction states. Requires Desktop Bridge plugin. For simpler components (depth ≤ 4), use figma_get_component_for_development instead."
+ },
+ {
+  "name": "figma_analyze_component_set",
+  "category": "PLUGIN",
+  "file": "src/core/deep-component-tools.ts",
+  "line": 104,
+  "handler_lines": 56,
+  "connector_methods": [
+   "analyzeComponentSet"
+  ],
+  "plugin_commands": [
+   "ANALYZE_COMPONENT_SET"
+  ],
+  "plugin_handler_lines": {
+   "ANALYZE_COMPONENT_SET": 1130
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "axe"
+  ],
+  "note": "",
+  "description": "Analyze a Figma COMPONENT_SET to extract variant state machine and cross-variant diffs for code generation. Returns: (1) variant axes (size, state) with all values, (2) CSS pseudo-class mappings for interaction states (hover→:hover, focus→:focus-visible, disabled→:disabled, error→[aria-invalid]), (3) visual diff from default state per variant (only changed properties — fill token, stroke token, stroke weight, text color, opacity, effects, visibility), (4) component property definitions mapped to code props (BOOLEAN→boolean, TEXT→string, INSTANCE_SWAP→slot/ReactNode), and (5) slots — Figma SLOT properties (name, preferredValues = the components a slot accepts, and limitViolations) to implement as named slots / children props (React {children} or named ReactNode; Web Components <slot name>). Use this on the parent COMPONENT_SET node, not individual variants. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_check_design_parity",
+  "category": "REST",
+  "file": "src/core/design-code-tools.ts",
+  "line": 3919,
+  "handler_lines": 216,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getNodes",
+   "getComponents"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/nodes",
+   "/files/${fileKey}/components"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Compare a Figma component's design specs against code-side data to find discrepancies. Returns a parity score, categorized discrepancies, and actionable fix items for both design-side (Figma tool calls) and code-side (file edits). Read the component source code first, then pass the data in codeSpec."
+ },
+ {
+  "name": "figma_generate_component_doc",
+  "category": "HYBRID",
+  "file": "src/core/design-code-tools.ts",
+  "line": 4139,
+  "handler_lines": 586,
+  "connector_methods": [
+   "getVariables",
+   "getComponentFromPluginUI"
+  ],
+  "plugin_commands": [
+   "GET_COMPONENT"
+  ],
+  "plugin_handler_lines": {
+   "GET_COMPONENT": 1043
+  },
+  "execute_code": true,
+  "rest_methods": [
+   "getNodes",
+   "getComponents"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/nodes",
+   "/files/${fileKey}/components"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Generate AI-complete component documentation from a Figma component. Produces structured markdown with anatomy, per-variant color tokens, typography, content guidelines (parsed from Figma description), design annotations (animation timings, interaction specs, accessibility notes from Dev Mode), icon mapping, spacing tokens, and design-code parity analysis. Merges Figma design data with optional code-side info (CVA definitions, sub-component APIs, source files). Output works with any docs platform. For richest output, read the component source code first and pass codeInfo. Pass history: { figma: true, git: true } to add an ongoing '## History' section: per-version design changes pulled from Figma version history and scoped to this component, plus recent git commits touching its source files."
+ },
+ {
+  "name": "figma_ds_analyze",
+  "category": "LOCAL",
+  "file": "src/core/design-system-extraction-tools.ts",
+  "line": 93,
+  "handler_lines": 122,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "codebase"
+  ],
+  "note": "",
+  "description": "Analyze one or more production app codebases as the first step of design system extraction. Detects framework (React/Next/Angular/Web Components), styling methods (Tailwind v3/v4, CSS Modules, SCSS, Emotion, styled-components), and vendor component layers (shadcn/ui, Radix, MUI, Chakra, etc.); builds a component inventory with per-component classification (vendored / wrapped / pure-vendor / bespoke), prop contracts, real usage counts (porting rank), observed prop values (variant inference), and duplicate detection. Pass multiple targets to find the shared design language across several apps. Writes the full manifest to <outDir>/.extraction/analysis.json and returns a compressed summary — read slices of the manifest for detail. Run this before figma_ds_extract_tokens and figma_ds_scaffold. Local Mode only."
+ },
+ {
+  "name": "figma_ds_extract_tokens",
+  "category": "LOCAL",
+  "file": "src/core/design-system-extraction-tools.ts",
+  "line": 219,
+  "handler_lines": 185,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "codebase",
+   "loadAnalysis",
+   "writeFile"
+  ],
+  "note": "",
+  "description": "Extract design tokens from analyzed codebases into canonical DTCG JSON (plus optional CSS variables / Tailwind / SCSS / TypeScript projections). Mines declared styling intent first — :root and @theme custom properties (light+dark → multi-mode tokens), SCSS variables, tailwind.config theme values, shadcn HSL triples — then promotes recurring raw values (hex colors, spacing/radius/font sizes) above a frequency threshold. Every token carries provenance (source file:line, confidence, frequency) in $extensions. Names are structural as-mined; do a semantic-naming review pass with the user afterwards. The DTCG output is directly importable into Figma variables with figma_import_tokens (top-level groups become collections). Requires figma_ds_analyze to have run for the same outDir. Local Mode only."
+ },
+ {
+  "name": "figma_ds_scaffold",
+  "category": "LOCAL",
+  "file": "src/core/design-system-extraction-tools.ts",
+  "line": 408,
+  "handler_lines": 83,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "loadAnalysis",
+   "readFile"
+  ],
+  "note": "",
+  "description": "Generate the design-system package skeleton at outDir from a completed analysis + token extraction: package.json (app framework as peer deps), src/components layout, token files via the shared formatter engine, a framework-neutral token-showcase MDX docs page (the bird's-eye view), and a README with the workflow. Storybook itself is NOT installed by this tool — after scaffolding, run `npm create storybook@latest` inside outDir (the CLI auto-detects the framework and installs the current Storybook version). Additive by default: existing files are skipped unless force. Local Mode only."
+ },
+ {
+  "name": "figma_ds_setup_storybook",
+  "category": "LOCAL",
+  "file": "src/core/design-system-extraction-tools.ts",
+  "line": 495,
+  "handler_lines": 36,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "loadAnalysis"
+  ],
+  "note": "",
+  "description": "Wire a freshly-initialized Storybook workshop to the extracted design system — run AFTER `npm create storybook@latest` inside outDir. Generates .storybook/preview.css (Tailwind entry importing the extracted tokens plus the SOURCE app's @theme utility mapping, custom @utility definitions, @layer base, and @font-face rules mined from its stylesheets, with a dark variant covering both .dark and [data-theme] conventions), copies self-hosted font files into staticDirs, and patches main.js (tailwind vite plugin + automatic JSX runtime — without it stories throw 'React is not defined') and preview.jsx (preview.css import + a theme toolbar/decorator using the extracted mode names). Idempotent; anything it can't patch safely is returned as a manual step. Local Mode only."
+ },
+ {
+  "name": "figma_ds_extract_component",
+  "category": "LOCAL",
+  "file": "src/core/design-system-extraction-tools.ts",
+  "line": 535,
+  "handler_lines": 124,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "loadAnalysis",
+   "readFile"
+  ],
+  "note": "",
+  "description": "Deep-extract ONE component from the inventory for porting into the design system: returns its source (capped), local import closure (relative imports to follow), prop contract, observed call-site variants, vendor classification, style touchpoints (classNames, CSS-module imports, custom properties referenced), and a ready-to-adapt CSF3 story scaffold with variant stories inferred from real usage. The agent then ports the component into <outDir>/src/components/<Name>/ and records progress with figma_ds_status. Local Mode only."
+ },
+ {
+  "name": "figma_ds_verify",
+  "category": "LOCAL",
+  "file": "src/core/design-system-extraction-tools.ts",
+  "line": 663,
+  "handler_lines": 23,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "loadAnalysis"
+  ],
+  "note": "",
+  "description": "Run the deterministic fidelity evals on an extracted design system package — the governance gate before handing off or pushing to Figma. Checks: tokens.json parses as DTCG and every alias resolves (import-ready); no quoted CSS functional expressions in generated token files (kills transitions); every var() consumed in component/preview CSS resolves in the workshop; every component directory has a stories file and index barrel; every portable inventory component has a porting status. Each check encodes a failure class found in real extraction runs. Also reports Figma round-trip readiness with the exact figma_import_tokens call for design-led orgs (ask the user code-led vs design-led). Local Mode only."
+ },
+ {
+  "name": "figma_ds_status",
+  "category": "LOCAL",
+  "file": "src/core/design-system-extraction-tools.ts",
+  "line": 690,
+  "handler_lines": 73,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "loadAnalysis"
+  ],
+  "note": "",
+  "description": "Read or update design-system extraction porting progress (persisted in <outDir>/.extraction/status.json so long engagements survive session boundaries). Call with only outDir to get a progress summary; pass update to record a component's porting status. Local Mode only."
+ },
+ {
+  "name": "figma_get_design_system_kit",
+  "category": "HYBRID",
+  "file": "src/core/design-system-tools.ts",
+  "line": 582,
+  "handler_lines": 532,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getComponents",
+   "getComponentSets",
+   "getNodes",
+   "getImages",
+   "getStyles"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/components",
+   "/files/${fileKey}/component_sets",
+   "/files/${fileKey}/nodes",
+   "/images/${fileKey}",
+   "/files/${fileKey}/styles"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "PREFERRED TOOL for design system extraction — replaces separate figma_get_styles, figma_get_variables, and figma_get_component calls. Returns tokens, components, and styles in a single optimized response with adaptive compression for large systems. Includes component visual specs (exact colors, padding, typography, layout), rendered screenshots, token values per mode (light/dark), and resolved style values. Use this instead of calling individual tools to avoid context window overflow. Ideal for AI code generation — use visualSpec for pixel-accurate reproduction. Variant specs are delta-encoded: the base variant carries the full visualSpec, siblings carry visualSpecDelta with only the properties that differ. Tokens/variables are read through the connected Desktop Bridge or cloud relay and work on ANY Figma plan — no Enterprise required. If a tokens fetch ever reports the Variables REST API is plan-limited (403), the bridge/relay is the plan-independent path: ensure it's connected and retry rather than abandoning variables."
+ },
+ {
+  "name": "figma_diagnose",
+  "category": "LOCAL",
+  "file": "src/core/diagnose-tool.ts",
+  "line": 122,
+  "handler_lines": 34,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "buildReport(): local environment / connection diagnostics",
+  "description": "Designer-readable health check for figma-console-mcp. Use this when something seems wrong — it self-identifies the server, reports plugin connection / file / token status in plain language, and disambiguates errors that may be coming from a different Figma-related MCP server. Recommended as the first step when a user reports a \"token expired\" or \"plugin disconnected\" issue."
+ },
+ {
+  "name": "figjam_create_sticky",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 75,
+  "handler_lines": 41,
+  "connector_methods": [
+   "createSticky"
+  ],
+  "plugin_commands": [
+   "CREATE_STICKY"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_STICKY": 5970
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a sticky note on a FigJam board. Only works in FigJam files.\n\n**Colors:** YELLOW, BLUE, GREEN, PINK, ORANGE, PURPLE, RED, LIGHT_GRAY, GRAY (default: YELLOW)"
+ },
+ {
+  "name": "figjam_create_stickies",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 117,
+  "handler_lines": 44,
+  "connector_methods": [
+   "createStickies"
+  ],
+  "plugin_commands": [
+   "CREATE_STICKIES"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_STICKIES": 6011
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Batch create multiple sticky notes on a FigJam board (max 200). Use this to populate boards from structured data (meeting notes, brainstorm ideas, etc.).\n\n**Colors:** YELLOW, BLUE, GREEN, PINK, ORANGE, PURPLE, RED, LIGHT_GRAY, GRAY"
+ },
+ {
+  "name": "figjam_create_connector",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 166,
+  "handler_lines": 56,
+  "connector_methods": [
+   "createConnector"
+  ],
+  "plugin_commands": [
+   "CREATE_CONNECTOR"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_CONNECTOR": 6069
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Connect two nodes with a connector line in FigJam. Use to create flowcharts, diagrams, and relationship maps.\n\nNodes must exist on the board (stickies, shapes, etc.). Use their node IDs from creation results.\n\n**Magnet positions:** AUTO (default), TOP, BOTTOM, LEFT, RIGHT — controls where the connector attaches to each node."
+ },
+ {
+  "name": "figjam_create_shape_with_text",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 227,
+  "handler_lines": 59,
+  "connector_methods": [
+   "createShapeWithText"
+  ],
+  "plugin_commands": [
+   "CREATE_SHAPE_WITH_TEXT"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_SHAPE_WITH_TEXT": 6174
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a labeled shape on a FigJam board with optional size, colors, and font control. Use for flowchart nodes, process diagrams, and visual organization.\n\n**Shape types:** ROUNDED_RECTANGLE (default), DIAMOND, ELLIPSE, TRIANGLE_UP, TRIANGLE_DOWN, PARALLELOGRAM_RIGHT, PARALLELOGRAM_LEFT, ENG_DATABASE, ENG_QUEUE, ENG_FILE, ENG_FOLDER"
+ },
+ {
+  "name": "figjam_create_section",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 291,
+  "handler_lines": 37,
+  "connector_methods": [
+   "createSection"
+  ],
+  "plugin_commands": [
+   "CREATE_SECTION"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_SECTION": 6125
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a section on a FigJam board. Sections are containers that can hold other elements. Use for grouping related content.\n\n**Note:** After creating a section, place elements inside it by setting their x/y coordinates within the section's bounds, then use figma_execute to call section.appendChild(node) to parent them."
+ },
+ {
+  "name": "figjam_create_table",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 333,
+  "handler_lines": 53,
+  "connector_methods": [
+   "createTable"
+  ],
+  "plugin_commands": [
+   "CREATE_TABLE"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_TABLE": 6259
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a table on a FigJam board with optional cell data. Use for structured data display, comparison matrices, and organized information.\n\n**Data format:** 2D array of strings, e.g. [[\"Header1\", \"Header2\"], [\"Row1Col1\", \"Row1Col2\"]]"
+ },
+ {
+  "name": "figjam_create_code_block",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 391,
+  "handler_lines": 43,
+  "connector_methods": [
+   "createCodeBlock"
+  ],
+  "plugin_commands": [
+   "CREATE_CODE_BLOCK"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_CODE_BLOCK": 6303
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a code block on a FigJam board. Use for sharing code snippets, config examples, or technical documentation in collaborative boards."
+ },
+ {
+  "name": "figjam_auto_arrange",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 439,
+  "handler_lines": 105,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Arrange nodes on a FigJam board in a grid, horizontal row, or vertical column layout. Use after batch-creating elements to organize them neatly."
+ },
+ {
+  "name": "figjam_get_board_contents",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 549,
+  "handler_lines": 49,
+  "connector_methods": [
+   "getBoardContents"
+  ],
+  "plugin_commands": [
+   "GET_BOARD_CONTENTS"
+  ],
+  "plugin_handler_lines": {
+   "GET_BOARD_CONTENTS": 6348
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Read all content from a FigJam board. Returns stickies, shapes, connectors, tables, code blocks, and sections with their text content and positions.\n\nUse this to understand what's on a board before modifying it, or to extract structured data from collaborative sessions.\n\n**Filters:** Pass nodeTypes to limit results (e.g., [\"STICKY\"] for only stickies). Omit for everything."
+ },
+ {
+  "name": "figjam_get_connections",
+  "category": "PLUGIN",
+  "file": "src/core/figjam-tools.ts",
+  "line": 599,
+  "handler_lines": 30,
+  "connector_methods": [
+   "getConnections"
+  ],
+  "plugin_commands": [
+   "GET_CONNECTIONS"
+  ],
+  "plugin_handler_lines": {
+   "GET_CONNECTIONS": 6454
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Read the connection graph from a FigJam board. Returns all connectors with their start/end node references and labels.\n\nUse this to understand relationships, flowcharts, and diagrams. Returns edges as {startNodeId, endNodeId, label} plus a summary of connected nodes."
+ },
+ {
+  "name": "figma_get_file_data",
+  "category": "REST",
+  "file": "src/core/figma-tools.ts",
+  "line": 883,
+  "handler_lines": 254,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getFile",
+   "getNodes"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}",
+   "/files/${fileKey}/nodes"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Get full file structure and document tree. WARNING: Can consume large amounts of tokens. NOT recommended for component descriptions (use figma_get_component instead). Best for understanding file structure or finding component nodeIds. Start with verbosity='summary' and depth=1 for initial exploration."
+ },
+ {
+  "name": "figma_get_variables",
+  "category": "HYBRID",
+  "file": "src/core/figma-tools.ts",
+  "line": 1151,
+  "handler_lines": 1445,
+  "connector_methods": [
+   "getVariables",
+   "getVariablesFromPluginUI"
+  ],
+  "plugin_commands": [
+   "GET_VARIABLES_DATA"
+  ],
+  "plugin_handler_lines": {
+   "GET_VARIABLES_DATA": null
+  },
+  "execute_code": true,
+  "rest_methods": [
+   "getAllVariables",
+   "getStyles"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/variables/local",
+   "/files/${fileKey}/variables/published",
+   "/files/${fileKey}/styles"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Extract design tokens and variables from a Figma file with code export support (CSS, Tailwind, TypeScript, Sass). Use when user asks for: design system tokens, variables, color/spacing values, theme data, or code exports. Handles multi-mode variables (Light/Dark themes). NOT for component metadata (use figma_get_component). Returns a compact summary by default — pass format='full' for the complete dataset or format='filtered' with collection/namePattern/mode filters for specific variables. Supports verbosity control to prevent token exhaustion. Resolution order: Desktop Bridge plugin (works on any plan) → Variables REST API (Enterprise only) → Styles API as a partial fallback. TIP: For full design system extraction (tokens + components + styles combined), prefer figma_get_design_system_kit instead — it returns everything in one optimized call."
+ },
+ {
+  "name": "figma_get_component",
+  "category": "HYBRID",
+  "file": "src/core/figma-tools.ts",
+  "line": 2601,
+  "handler_lines": 265,
+  "connector_methods": [
+   "getComponentFromPluginUI"
+  ],
+  "plugin_commands": [
+   "GET_COMPONENT"
+  ],
+  "plugin_handler_lines": {
+   "GET_COMPONENT": 1043
+  },
+  "execute_code": false,
+  "rest_methods": [
+   "getComponentData"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/nodes"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Get a SINGLE component's metadata or reconstruction specification. Two export formats: (1) 'metadata' (default) - comprehensive documentation with properties, variants, and design tokens for style guides and references, (2) 'reconstruction' - node tree specification compatible with Figma Component Reconstructor plugin for programmatic component creation. IMPORTANT: For local/unpublished components with metadata format, ensure the Figma Desktop Bridge plugin is running (Right-click in Figma → Plugins → Development → Figma Desktop Bridge) to get complete description data. TIP: To get ALL components with visual specs in one call, prefer figma_get_design_system_kit instead."
+ },
+ {
+  "name": "figma_get_styles",
+  "category": "REST",
+  "file": "src/core/figma-tools.ts",
+  "line": 2868,
+  "handler_lines": 183,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getStyles"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/styles"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Get all styles (color, text, effects, grids) from a Figma file with optional code exports. Use when user asks for: text styles, color palette, design system styles, typography, or style documentation. Returns organized style definitions with resolved values. NOT for design tokens/variables (use figma_get_variables). Set enrich=true for CSS/Tailwind/Sass code examples. Supports verbosity control to manage payload size. TIP: For full design system extraction (tokens + components + styles combined), prefer figma_get_design_system_kit instead — it returns everything in one optimized call."
+ },
+ {
+  "name": "figma_get_component_image",
+  "category": "REST",
+  "file": "src/core/figma-tools.ts",
+  "line": 3053,
+  "handler_lines": 151,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getNodes",
+   "getImages"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/nodes",
+   "/images/${fileKey}"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Render a specific component or node as an image (PNG, JPG, SVG, PDF). Returns image URL valid for 30 days. Use when user asks for: component screenshot, visual preview, rendered output, or 'show me'. NOT for component metadata/properties (use figma_get_component). NOT for getting code/layout data (use figma_get_component_for_development). Best for: visual references, design review, documentation."
+ },
+ {
+  "name": "figma_get_component_for_development",
+  "category": "HYBRID",
+  "file": "src/core/figma-tools.ts",
+  "line": 3206,
+  "handler_lines": 415,
+  "connector_methods": [
+   "getAnnotations",
+   "getComponentFromPluginUI"
+  ],
+  "plugin_commands": [
+   "GET_ANNOTATIONS",
+   "GET_COMPONENT"
+  ],
+  "plugin_handler_lines": {
+   "GET_ANNOTATIONS": 2454,
+   "GET_COMPONENT": 1043
+  },
+  "execute_code": false,
+  "rest_methods": [
+   "getNodes",
+   "getImages"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/nodes",
+   "/images/${fileKey}"
+  ],
+  "local_markers": [
+   "codebase"
+  ],
+  "note": "",
+  "description": "Get component data optimized for high-fidelity UI implementation. Returns a deep component tree (depth 4) with design tokens (boundVariables), interaction states (reactions), sizing constraints (min/max/layoutSizing), text behavior (autoResize, truncation), Figma slots (named freeform-content regions on a component, with the components each accepts and any min/max limit violations), and design annotations. Automatically includes 2x rendered image. Use when user asks to: 'build this component', 'implement this in React/Vue', 'generate code for', or needs both visual reference and technical specs for production-quality, accessible, token-aware code. For just metadata/descriptions, use figma_get_component. For just image, use figma_get_component_image. For full annotation details, use figma_get_annotations. To resolve variable IDs to names/values, use figma_get_variables."
+ },
+ {
+  "name": "figma_get_file_for_plugin",
+  "category": "REST",
+  "file": "src/core/figma-tools.ts",
+  "line": 3623,
+  "handler_lines": 209,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getFile",
+   "getNodes"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}",
+   "/files/${fileKey}/nodes"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Get file data optimized for plugin development with filtered properties (IDs, structure, plugin data, component relationships). Excludes visual properties (fills, strokes, effects) to reduce payload. Use when user asks for: plugin development, file structure for manipulation, node IDs for plugin API. NOT for component descriptions (use figma_get_component). NOT for visual/styling data (use figma_get_component_for_development). Supports deeper tree traversal (max depth=5) than figma_get_file_data."
+ },
+ {
+  "name": "figma_capture_screenshot",
+  "category": "PLUGIN",
+  "file": "src/core/figma-tools.ts",
+  "line": 3836,
+  "handler_lines": 102,
+  "connector_methods": [
+   "captureScreenshot"
+  ],
+  "plugin_commands": [
+   "CAPTURE_SCREENSHOT"
+  ],
+  "plugin_handler_lines": {
+   "CAPTURE_SCREENSHOT": 3768
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Capture a screenshot of a node using the plugin's exportAsync API. IMPORTANT: This tool captures the CURRENT state from the plugin runtime (not cloud state like REST API), making it reliable for validating changes immediately after making them. Use this instead of figma_get_component_image when you need to verify that changes were applied correctly. Defaults are AI-optimized: PNG at 1x with automatic downscaling so the longest side stays within the 1568px AI vision processing ceiling. PNG is the default because design tool content (flat colors, text, UI components) compresses significantly better as PNG. Use JPG for photographic or gradient-heavy content. Requires Desktop Bridge connection (Figma Desktop with plugin running)."
+ },
+ {
+  "name": "figma_set_instance_properties",
+  "category": "PLUGIN",
+  "file": "src/core/figma-tools.ts",
+  "line": 3942,
+  "handler_lines": 85,
+  "connector_methods": [
+   "setInstanceProperties"
+  ],
+  "plugin_commands": [
+   "SET_INSTANCE_PROPERTIES"
+  ],
+  "plugin_handler_lines": {
+   "SET_INSTANCE_PROPERTIES": 4012
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Update component properties on a component instance. IMPORTANT: Use this tool instead of trying to edit text nodes directly when working with component instances. Components often expose TEXT, BOOLEAN, INSTANCE_SWAP, and VARIANT properties that control their content. SLOT properties CANNOT be set here — use figma_append_to_slot to populate slot content. Direct text node editing may fail silently if the component uses properties. This tool handles the #nodeId suffix pattern automatically. Requires Desktop Bridge connection."
+ },
+ {
+  "name": "figma_get_library_component_by_key",
+  "category": "REST",
+  "file": "src/core/library-tools.ts",
+  "line": 129,
+  "handler_lines": 283,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getComponentSetByKey",
+   "getComponentByKey",
+   "getNodes",
+   "getComponents"
+  ],
+  "rest_endpoints": [
+   "/component_sets/${key}",
+   "/components/${key}",
+   "/files/${fileKey}/nodes",
+   "/files/${fileKey}/components"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Get full property definitions, variants, and visual specs for a SINGLE published library component using only its component key.\n\n**USE THIS when you have a component key** (the 40-char hex returned by figma_search_components, figma_get_library_components, or search_design_system) **and want to inspect what properties/variants it exposes** before instantiating it — without first needing the source library file's URL.\n\n**RESOLVES**: componentKey → file_key + node_id → componentPropertyDefinitions + variants + visualSpec.\n\n**WORKFLOW**:\n1. Pass the componentKey from search results\n2. Tool tries /v1/component_sets/{key} first (most common case — buttons, inputs with variants)\n3. On 404 falls back to /v1/components/{key} (standalone components)\n4. Fetches the parent COMPONENT_SET at depth=2 to read componentPropertyDefinitions and per-variant visual data\n5. For COMPONENT_SET keys, also fetches the source file's /components list to map each variant's node to its published variant key (needed for figma_instantiate_component)\n\n**REQUIRES** FIGMA_ACCESS_TOKEN with library_assets:read and files:read scopes."
+ },
+ {
+  "name": "figma_get_library_variables",
+  "category": "PLUGIN",
+  "file": "src/core/library-tools.ts",
+  "line": 474,
+  "handler_lines": 186,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "List all variables from team libraries the current file has subscribed.\n\n**USE THIS** when you want to see what design tokens (colors, spacing, typography sizes, booleans, strings) are available from shared libraries — without needing the library file's URL or REST API Enterprise plan.\n\n**HOW IT WORKS**: Calls figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync() + getVariablesInLibraryCollectionAsync() via the Desktop Bridge. Only libraries the user has explicitly enabled in the current file appear (Figma security model).\n\n**WORKFLOW**:\n1. Call this tool to inventory available library variables\n2. Find the variable you want (use libraryName + collectionName + variable name to identify)\n3. Pass its key to figma_import_library_variable to bring it into the current file\n4. Once imported, the variable's id can be used with figma_set_fills / figma_update_variable / any standard variable-binding tool\n\n**Filters**: libraryName/collectionName accept partial case-insensitive matches.\n\n**REQUIRES** the Desktop Bridge plugin to be running in Figma Desktop."
+ },
+ {
+  "name": "figma_import_library_variable",
+  "category": "PLUGIN",
+  "file": "src/core/library-tools.ts",
+  "line": 665,
+  "handler_lines": 134,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Import a single variable from a subscribed team library into the current file.\n\nAfter import, the variable becomes locally addressable by its returned 'id' and can be passed to any tool that binds variables to nodes (fills, strokes, paddings, etc.). The import is idempotent — calling it twice returns the same local id.\n\n**WORKFLOW**:\n1. Run figma_get_library_variables to find the variable key\n2. Call this tool with that key\n3. Use the returned 'id' with figma_set_fills (boundVariables), figma_update_variable, or other binding tools\n\n**REQUIRES** the Desktop Bridge plugin and that the source library is subscribed by the current file (otherwise importVariableByKeyAsync rejects)."
+ },
+ {
+  "name": "figma_execute_across_files",
+  "category": "PLUGIN",
+  "file": "src/core/multi-file-tools.ts",
+  "line": 16,
+  "handler_lines": 180,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Run the same JavaScript against multiple Figma files connected via the Desktop Bridge plugin, IN PARALLEL, without touching the active file or target lock. Built for cross-file consistency work — e.g. running the same structural check or fix against every file in a multi-file design system and diffing the results — instead of switching the active file and running figma_execute once per file in sequence. Each file's code runs in that file's own plugin context (same 'figma' global as figma_execute). You must say which files to target: pass fileKeys (read them from figma_list_open_files first — strongly preferred for anything that writes), or pass allFiles: true to hit every connected file. Requires Desktop Bridge plugin open in each target file. Local Mode only."
+ },
+ {
+  "name": "figma_list_slides",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 78,
+  "handler_lines": 38,
+  "connector_methods": [
+   "listSlides"
+  ],
+  "plugin_commands": [
+   "LIST_SLIDES"
+  ],
+  "plugin_handler_lines": {
+   "LIST_SLIDES": 6530
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "List all slides in the current Figma Slides presentation with their IDs, names, grid positions, and skip status. Only works in Slides files."
+ },
+ {
+  "name": "figma_get_slide_content",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 117,
+  "handler_lines": 35,
+  "connector_methods": [
+   "getSlideContent"
+  ],
+  "plugin_commands": [
+   "GET_SLIDE_CONTENT"
+  ],
+  "plugin_handler_lines": {
+   "GET_SLIDE_CONTENT": 6574
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Get the content tree of a specific slide including all text, shapes, and frames. Returns node hierarchy with properties."
+ },
+ {
+  "name": "figma_get_slide_grid",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 153,
+  "handler_lines": 30,
+  "connector_methods": [
+   "getSlideGrid"
+  ],
+  "plugin_commands": [
+   "GET_SLIDE_GRID"
+  ],
+  "plugin_handler_lines": {
+   "GET_SLIDE_GRID": 6717
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Get the 2D slide grid layout showing how slides are organized in rows and columns."
+ },
+ {
+  "name": "figma_get_slide_transition",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 184,
+  "handler_lines": 35,
+  "connector_methods": [
+   "getSlideTransition"
+  ],
+  "plugin_commands": [
+   "GET_SLIDE_TRANSITION"
+  ],
+  "plugin_handler_lines": {
+   "GET_SLIDE_TRANSITION": 6850
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Get the current transition settings for a slide (style, duration, easing curve, timing)."
+ },
+ {
+  "name": "figma_get_text_styles",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 220,
+  "handler_lines": 29,
+  "connector_methods": [
+   "getTextStyles"
+  ],
+  "plugin_commands": [
+   "GET_TEXT_STYLES"
+  ],
+  "plugin_handler_lines": {
+   "GET_TEXT_STYLES": 7002
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Get all local text styles in the current file. Returns style IDs, names, font info, and sizes. Use these IDs when setting textStyleId on text nodes via figma_execute."
+ },
+ {
+  "name": "figma_get_focused_slide",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 250,
+  "handler_lines": 30,
+  "connector_methods": [
+   "getFocusedSlide"
+  ],
+  "plugin_commands": [
+   "GET_FOCUSED_SLIDE"
+  ],
+  "plugin_handler_lines": {
+   "GET_FOCUSED_SLIDE": 6908
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Get the slide currently focused in single-slide view."
+ },
+ {
+  "name": "figma_create_slide",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 285,
+  "handler_lines": 43,
+  "connector_methods": [
+   "createSlide"
+  ],
+  "plugin_commands": [
+   "CREATE_SLIDE"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_SLIDE": 6619
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a new blank slide in the Figma Slides presentation. Optionally specify grid position."
+ },
+ {
+  "name": "figma_delete_slide",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 329,
+  "handler_lines": 35,
+  "connector_methods": [
+   "deleteSlide"
+  ],
+  "plugin_commands": [
+   "DELETE_SLIDE"
+  ],
+  "plugin_handler_lines": {
+   "DELETE_SLIDE": 6652
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Delete a slide from the presentation. WARNING: This is a destructive operation (can be undone with Figma's undo)."
+ },
+ {
+  "name": "figma_duplicate_slide",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 365,
+  "handler_lines": 35,
+  "connector_methods": [
+   "duplicateSlide"
+  ],
+  "plugin_commands": [
+   "DUPLICATE_SLIDE"
+  ],
+  "plugin_handler_lines": {
+   "DUPLICATE_SLIDE": 6685
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Duplicate an existing slide. The clone is placed adjacent to the original."
+ },
+ {
+  "name": "figma_reorder_slides",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 401,
+  "handler_lines": 37,
+  "connector_methods": [
+   "reorderSlides"
+  ],
+  "plugin_commands": [
+   "REORDER_SLIDES"
+  ],
+  "plugin_handler_lines": {
+   "REORDER_SLIDES": 6756
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Reorder slides by providing a new 2D array of slide IDs. Each inner array represents a row in the grid. WARNING: This is a destructive operation."
+ },
+ {
+  "name": "figma_set_slide_transition",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 439,
+  "handler_lines": 55,
+  "connector_methods": [
+   "setSlideTransition"
+  ],
+  "plugin_commands": [
+   "SET_SLIDE_TRANSITION"
+  ],
+  "plugin_handler_lines": {
+   "SET_SLIDE_TRANSITION": 6809
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Set the transition effect for a slide (style, duration, easing curve). Triggers on click by default."
+ },
+ {
+  "name": "figma_skip_slide",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 495,
+  "handler_lines": 38,
+  "connector_methods": [
+   "skipSlide"
+  ],
+  "plugin_commands": [
+   "SKIP_SLIDE"
+  ],
+  "plugin_handler_lines": {
+   "SKIP_SLIDE": 6970
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Toggle whether a slide is skipped during presentation mode."
+ },
+ {
+  "name": "figma_add_text_to_slide",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 534,
+  "handler_lines": 101,
+  "connector_methods": [
+   "addTextToSlide"
+  ],
+  "plugin_commands": [
+   "ADD_TEXT_TO_SLIDE"
+  ],
+  "plugin_handler_lines": {
+   "ADD_TEXT_TO_SLIDE": 7104
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Add a new text element to a specific slide. Supports custom fonts, colors, alignment, and text formatting."
+ },
+ {
+  "name": "figma_add_shape_to_slide",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 636,
+  "handler_lines": 64,
+  "connector_methods": [
+   "addShapeToSlide"
+  ],
+  "plugin_commands": [
+   "ADD_SHAPE_TO_SLIDE"
+  ],
+  "plugin_handler_lines": {
+   "ADD_SHAPE_TO_SLIDE": 7168
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Add a rectangle or ellipse shape to a specific slide with optional fill color."
+ },
+ {
+  "name": "figma_set_slide_background",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 701,
+  "handler_lines": 39,
+  "connector_methods": [
+   "setSlideBackground"
+  ],
+  "plugin_commands": [
+   "SET_SLIDE_BACKGROUND"
+  ],
+  "plugin_handler_lines": {
+   "SET_SLIDE_BACKGROUND": 7042
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Set the background color of a slide. Creates or updates a full-slide background rectangle."
+ },
+ {
+  "name": "figma_set_slides_view_mode",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 745,
+  "handler_lines": 34,
+  "connector_methods": [
+   "setSlidesViewMode"
+  ],
+  "plugin_commands": [
+   "SET_SLIDES_VIEW_MODE"
+  ],
+  "plugin_handler_lines": {
+   "SET_SLIDES_VIEW_MODE": 6880
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Toggle the Figma Slides viewport between grid view and single-slide view."
+ },
+ {
+  "name": "figma_focus_slide",
+  "category": "PLUGIN",
+  "file": "src/core/slides-tools.ts",
+  "line": 780,
+  "handler_lines": 35,
+  "connector_methods": [
+   "focusSlide"
+  ],
+  "plugin_commands": [
+   "FOCUS_SLIDE"
+  ],
+  "plugin_handler_lines": {
+   "FOCUS_SLIDE": 6937
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Navigate to and focus a specific slide in single-slide view."
+ },
+ {
+  "name": "figma_create_slot",
+  "category": "PLUGIN",
+  "file": "src/core/slot-tools.ts",
+  "line": 33,
+  "handler_lines": 67,
+  "connector_methods": [
+   "createSlot"
+  ],
+  "plugin_commands": [
+   "CREATE_SLOT"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_SLOT": 2838
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a SlotNode inside a component using createSlot(). Automatically creates a linked SLOT component property named after the slot (renaming the slot renames the property). Slots are freeform drop zones for instance content — more flexible than INSTANCE_SWAP. Works on standalone COMPONENTs and variant COMPONENTs inside a COMPONENT_SET (call once per variant). GRID layout is not allowed on slots. Requires Desktop Bridge."
+ },
+ {
+  "name": "figma_get_slots",
+  "category": "PLUGIN",
+  "file": "src/core/slot-tools.ts",
+  "line": 101,
+  "handler_lines": 42,
+  "connector_methods": [
+   "getSlots"
+  ],
+  "plugin_commands": [
+   "GET_SLOTS"
+  ],
+  "plugin_handler_lines": {
+   "GET_SLOTS": 2904
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "List SlotNode children on a component, component set, or instance. Returns slot IDs, names, property keys, dimensions, and current child nodes. Use on instances before figma_append_to_slot to discover slot names/IDs."
+ },
+ {
+  "name": "figma_append_to_slot",
+  "category": "PLUGIN",
+  "file": "src/core/slot-tools.ts",
+  "line": 144,
+  "handler_lines": 89,
+  "connector_methods": [
+   "appendToSlot"
+  ],
+  "plugin_commands": [
+   "APPEND_TO_SLOT"
+  ],
+  "plugin_handler_lines": {
+   "APPEND_TO_SLOT": 2957
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Add content to a slot on a component instance. Clones sourceNodeId into the slot, or creates a new node (nodeType). SLOT content cannot be set via figma_set_instance_properties — use this tool instead. Widgets, stickies, and raw ComponentNodes cannot be appended to slots."
+ },
+ {
+  "name": "figma_reset_slot",
+  "category": "PLUGIN",
+  "file": "src/core/slot-tools.ts",
+  "line": 234,
+  "handler_lines": 57,
+  "connector_methods": [
+   "resetSlot"
+  ],
+  "plugin_commands": [
+   "RESET_SLOT"
+  ],
+  "plugin_handler_lines": {
+   "RESET_SLOT": 3081
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Reset a slot on a component instance to its default (empty) state from the main component. Uses SlotNode.resetSlot()."
+ },
+ {
+  "name": "figma_add_slot_property",
+  "category": "PLUGIN",
+  "file": "src/core/slot-tools.ts",
+  "line": 292,
+  "handler_lines": 87,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Manually add a SLOT component property and bind it to an existing frame (alternative to figma_create_slot). The frame must be a direct child of the component, must not use GRID layout, and must not be nested inside another slot. Supports description and preferredValues."
+ },
+ {
+  "name": "figma_export_tokens",
+  "category": "PLUGIN",
+  "file": "src/core/tokens-tools.ts",
+  "line": 135,
+  "handler_lines": 29,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "handleExport() -> connector.getVariablesFromPluginUI (GET_VARIABLES_DATA), then writes token files locally",
+  "description": "Export Figma variables to design token files in your codebase. Bidirectional with figma_import_tokens — together they replace Style Dictionary and Tokens Studio's export pipeline for the popular styling methods.\n\nFULLY-IMPLEMENTED OUTPUT FORMATS:\n  • dtcg — W3C DTCG JSON. Canonical pivot format. Round-trip safe via `$extensions[\"figma-console-mcp\"]`.\n  • css-vars — CSS custom properties with mode-aware selectors (`:root`, `.dark`, `[data-theme=...]`).\n  • tailwind-v4 — Tailwind v4 `@theme inline` block. Token-to-namespace mapping (color/*, spacing/*, radius/*, etc.) generates Tailwind utility classes.\n  • tailwind-v3 — `tailwind.config.js` theme.extend object grouped under Tailwind's theme keys (colors, spacing, fontFamily, etc.).\n  • scss — `$var: value;` declarations. Multi-mode emits a primary variable + a mode-keyed SCSS map for runtime access.\n  • ts-module — `export const tokens = { ... } as const` with derived `Tokens` type. Multi-mode tokens emit as `{ Light: ..., Dark: ... }` objects.\n  • json-flat — flat key-value JSON (`{\"ds-color-primary\": \"#4085F2\"}`) for custom build scripts.\n  • json-nested — nested object JSON mirroring the token path tree.\n  • style-dictionary-v3 — SD v3 source format with bare `value`/`type` keys (back-compat for existing SD users).\n  • tokens-studio — Tokens Studio multi-file layout (`$themes.json` + `$metadata.json` + per-set files). Preserves Figma collection/mode bindings for round-trip with the TS plugin.\n\nZERO-ARG USAGE: With a tokens.config.json at your project root, just call the tool with no args — it picks up source dir, output formats, modes, prefix, etc. from config. See the response's `suggestedScaffold` payload when no config is detected — present it to the user, write the scaffold via your file tools, then call again.\n\nWRITE SAFETY: Export REPLACES the contents of each target file with the current Figma state — it does not merge into it. Under the default `strategy: \"merge\"` the tool refuses to write (and changes nothing) when overwriting an existing DTCG file would delete tokens it does not manage: tokens added by hand, or tokens from collections outside this export. It also refuses when a requested collectionId is not in the file it read, or when the export is empty — both usually mean a different file is active in Figma than you intended. Variables deleted in Figma are removed from the file as normal. Use `dry-run` to preview, `replace` to overwrite unconditionally. Generated files record the Figma file they came from (a `Source: Figma file <key>` header line; `figmaFileKey` in DTCG), and the default strategy also refuses to overwrite a file that was generated from a DIFFERENT Figma file. Plain-JSON formats (json-flat, json-nested, style-dictionary-v3, tokens-studio) cannot carry that record — pin `figmaFile` in tokens.config.json for a hard guarantee. Every response includes `source` (the Figma file name/key the data was read from) — check it.\n\nDTCG DIALECT (`dtcgDialect`, applies to dtcg/json-flat/json-nested outputs): legacy (default): hex-string colors, maximum compatibility (Style Dictionary v4, Tokens Studio). 2025: DTCG 2025.10 object colors/dimensions (Style Dictionary v5+). figma_import_tokens accepts BOTH dialects regardless of this setting.\n\nROUND-TRIP SAFETY: Figma variable IDs are preserved in DTCG `$extensions[\"figma-console-mcp\"]` so renames on either side don't create duplicates. The same metadata enables non-destructive incremental sync via figma_import_tokens. Variable scopes (when non-default) and per-platform codeSyntax (when set) are stashed there too and round-trip through import."
+ },
+ {
+  "name": "figma_import_tokens",
+  "category": "PLUGIN",
+  "file": "src/core/tokens-tools.ts",
+  "line": 171,
+  "handler_lines": 24,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Push design tokens from your codebase into Figma as variables. Bidirectional with figma_export_tokens.\n\nACCEPTS: DTCG JSON (canonical, fully supported including round-trip metadata preservation). Tokens Studio JSON, CSS custom properties, Tailwind v4 @theme, SCSS, and Style Dictionary v3 are scaffolded but return a NotImplementedError — convert to DTCG first via figma_export_tokens or hand-author DTCG. Use `format: \"auto\"` to sniff the input.\n\nAPPLY PHASE (full bidirectional sync): toCreate entries create missing collections (with the token file's full mode list) and missing variables in one batched plugin round-trip — literal values first, alias values in a second pass so aliases between newly-created variables resolve. toUpdate entries push value updates in a batched round-trip, INCLUDING alias-target updates: when a token's value is a reference, it's written as a Figma variable alias if the reference resolves to an existing or just-created variable (unresolvable references skip with a warning). toDelete entries are STRICTLY gated behind `strategy: \"replace\"` — in replace mode, Figma variables absent from the token file are permanently deleted (a loud warning lists the count); merge (default) preserves them and only reports. TIMING/EASING variables cannot be created or written via the Plugin API and are skipped with a warning. Variable scopes and per-platform codeSyntax (from `$extensions[\"figma-console-mcp\"].scopes/.codeSyntax`) are diffed and applied too — absent fields mean \"no opinion\" (Figma-side metadata is preserved), an explicit value is authoritative. Partial-success semantics: per-item errors surface in applyResult.errors[] without failing the batch.\n\nDIFF-AWARE: Default `strategy: \"merge\"` diffs against current Figma state and applies only deltas. The hacked-color scenario — designer edits one hex value in their CSS — produces exactly one Figma API update, not a full collection rewrite. Match priority: Figma variable ID (in `$extensions[\"figma-console-mcp\"].variableId`), then exact token path, then value fingerprint.\n\nCONFLICT HANDLING: When BOTH Figma and code changed the same token since the last sync, `onConflict: \"ask\"` (default) surfaces the conflict and writes nothing. Use `figma-wins` / `code-wins` to auto-resolve, or `skip` to leave conflicts alone and proceed with the rest.\n\nDRY-RUN: Default first call after detecting changes is dry-run for safety. The response includes the full diff plan; user confirms, then call again with `dryRun: false` (or `strategy` other than dry-run) to apply."
+ },
+ {
+  "name": "figma_get_file_versions",
+  "category": "REST",
+  "file": "src/core/version-tools.ts",
+  "line": 194,
+  "handler_lines": 177,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getFileVersions"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/versions${query}"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "List a Figma file's version history with metadata (label, description, author, timestamp). Auto-paginates up to max_versions. By default returns only labeled versions (skips auto-saves). Pass include_autosaves=true to see every saved state. Use the returned pagination.next_cursor to continue paging. Required scope: file_versions:read (OAuth) or 'Versions' Read (PAT)."
+ },
+ {
+  "name": "figma_get_file_at_version",
+  "category": "REST",
+  "file": "src/core/version-tools.ts",
+  "line": 375,
+  "handler_lines": 108,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [
+   "getNodes",
+   "getFile"
+  ],
+  "rest_endpoints": [
+   "/files/${fileKey}/nodes",
+   "/files/${fileKey}"
+  ],
+  "local_markers": [],
+  "note": "",
+  "description": "Fetch a Figma file (or specific nodes) as it existed at a past version_id. Thin snapshot tool — same shape as figma_get_file_data but bound to a historical version. Use figma_get_file_versions to discover version IDs. Combine with depth and node_ids to keep payloads small. Required scope: file_content:read (already standard)."
+ },
+ {
+  "name": "figma_diff_versions",
+  "category": "REST",
+  "file": "src/core/version-tools.ts",
+  "line": 874,
+  "handler_lines": 27,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "computeDiff() -> api.getFileVersions / getFile",
+  "description": "Diff two versions of a Figma file. Always returns a cheap page-structure diff (added/removed/renamed pages, 2 API calls). Pass component_ids to additionally get per-node deep diffs at depth=2 (added/removed children, name/description changes, componentPropertyDefinitions changes for COMPONENT_SETs, boundVariables deltas) — costs 2 API calls per scoped node. Use 'current' for to_version to diff against HEAD. v1.25.0: when the Desktop Bridge plugin is connected, description and Dev Mode annotation changes are ALSO tracked via a session buffer and surfaced under `scoped_nodes[].metadata_changes[]` and `unscoped_metadata_changes[]` — Figma REST omits these from version snapshots so they're otherwise invisible. STILL NOT tracked: instances of components on the canvas, raw layout properties (layoutSizingHorizontal/Vertical, unbound paddings/widths), raw visual properties (cornerRadius, unbound fills), variable VALUE changes, style content, and metadata edits made while the plugin was disconnected. See `scope_coverage` and `notes[]` for the full coverage map and complementary tools."
+ },
+ {
+  "name": "figma_get_changes_since_version",
+  "category": "REST",
+  "file": "src/core/version-tools.ts",
+  "line": 905,
+  "handler_lines": 30,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "computeDiff() -> api.getFileVersions / getFile",
+  "description": "Convenience wrapper for figma_diff_versions: compares a given version against the current HEAD. Same output shape as figma_diff_versions, with to_version implicitly 'current'. Useful for 'what's changed since the last code-sync' workflows."
+ },
+ {
+  "name": "figma_generate_changelog",
+  "category": "REST",
+  "file": "src/core/version-tools.ts",
+  "line": 939,
+  "handler_lines": 91,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Generate a human-readable markdown changelog between two versions. Wraps figma_diff_versions and enriches the output with author labels and timestamps via figma_get_file_versions lookback (one extra cheap API call). Returns BOTH a `markdown` string (paste into release notes / PRs / Storybook MDX) and the structured diff data. Same component_ids and mode semantics as figma_diff_versions. Use 'current' for to_version to changelog against HEAD."
+ },
+ {
+  "name": "figma_blame_node",
+  "category": "REST",
+  "file": "src/core/version-tools.ts",
+  "line": 1034,
+  "handler_lines": 304,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Find the version that introduced a specific change to a node — answers 'who/when added this'. Walks version history backward via binary search (~log2(N) API calls instead of N) to localize the introduction point. Returns the version's metadata (label/author/timestamp). Default includes autosaves for finer attribution; system 'Figma' user appears occasionally for scheduled snapshots and is flagged via attribution_certainty='system_attributed'. Specify EXACTLY ONE of target_component_property or target_child_node_id. node_id is optional — if omitted, falls back to the first node in the current Figma selection."
+ },
+ {
+  "name": "figma_execute",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 20,
+  "handler_lines": 92,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Execute arbitrary JavaScript in Figma's plugin context with full access to the figma API. Use for complex operations not covered by other tools. Requires Desktop Bridge plugin. CAUTION: Can modify your document.\n\n**COMPONENT INSTANCES:** For instances (node.type === 'INSTANCE'), use figma_set_instance_properties — direct text editing FAILS SILENTLY. Check instance.componentProperties for available props (may have #nodeId suffixes).\n\n**RESULT ANALYSIS:** Check resultAnalysis.warning for silent failures (empty arrays, null returns).\n\n**VALIDATION:** After creating/modifying visuals: screenshot with figma_capture_screenshot, check alignment/spacing/proportions, iterate up to 3x.\n\n**PLACEMENT:** Always create components inside a Section or Frame, never on blank canvas. Use parent.insertChild(0, bg) for z-ordering backgrounds behind content.\n\n**HOUSEKEEPING (MANDATORY):**\nBefore creating: screenshot the target page to see existing content and find clear space.\nWhen creating: place inside a named Section, positioned BELOW or AWAY from existing content. Never overlap.\nAfter creating: screenshot to verify clean placement and no overlaps.\nOn failure/retry: DELETE any partial artifacts (empty frames, orphaned layers, blank pages) before retrying. Use node.remove() to clean up.\nPages: NEVER create a new page if one with that name already exists — use the existing one. If you created a blank page during a failed attempt, delete it.\nLayers: If your code creates helper frames, placeholder nodes, or intermediate layers that aren't part of the final result, remove them.\n\n**MULTI-FILE (Local Mode only):** Pass fileKey to run this in a specific connected file without switching the active file/target lock (see figma_list_open_files). To run the same code across several connected files at once, use figma_execute_across_files instead. Cloud Mode pairs with a single plugin instance and rejects fileKey."
+ },
+ {
+  "name": "figma_update_variable",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 118,
+  "handler_lines": 104,
+  "connector_methods": [
+   "updateVariable",
+   "setVariableDescription"
+  ],
+  "plugin_commands": [
+   "UPDATE_VARIABLE",
+   "SET_VARIABLE_DESCRIPTION"
+  ],
+  "plugin_handler_lines": {
+   "UPDATE_VARIABLE": 612,
+   "SET_VARIABLE_DESCRIPTION": 880
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Update a single variable's value and/or its description. Pass modeId+value to change the value in a mode; pass description to set the 'How to use this variable' text shown in the Variables panel (and exported as DTCG $description). At least one of {modeId+value} or {description} is required. For many value updates at once, use figma_batch_update_variables (10-50x faster). Use figma_get_variables first for IDs. COLOR: hex '#FF0000', FLOAT: number, STRING: text, BOOLEAN: true/false. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_create_variable",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 224,
+  "handler_lines": 81,
+  "connector_methods": [
+   "createVariable"
+  ],
+  "plugin_commands": [
+   "CREATE_VARIABLE"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_VARIABLE": 663
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a single Figma variable. For multiple variables, use figma_batch_create_variables instead (10-50x faster). Use figma_get_variables first to get collection IDs. Supports COLOR, FLOAT, STRING, BOOLEAN. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_create_variable_collection",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 307,
+  "handler_lines": 64,
+  "connector_methods": [
+   "createVariableCollection"
+  ],
+  "plugin_commands": [
+   "CREATE_VARIABLE_COLLECTION"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_VARIABLE_COLLECTION": 721
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create an empty variable collection. To create a collection WITH variables and modes in one step, use figma_setup_design_tokens instead. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_delete_variable",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 373,
+  "handler_lines": 53,
+  "connector_methods": [
+   "deleteVariable"
+  ],
+  "plugin_commands": [
+   "DELETE_VARIABLE"
+  ],
+  "plugin_handler_lines": {
+   "DELETE_VARIABLE": 763
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Delete a Figma variable. WARNING: This is a destructive operation that cannot be undone (except with Figma's undo). Use figma_get_variables first to get variable IDs. Requires the Desktop Bridge plugin to be running."
+ },
+ {
+  "name": "figma_delete_variable_collection",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 428,
+  "handler_lines": 53,
+  "connector_methods": [
+   "deleteVariableCollection"
+  ],
+  "plugin_commands": [
+   "DELETE_VARIABLE_COLLECTION"
+  ],
+  "plugin_handler_lines": {
+   "DELETE_VARIABLE_COLLECTION": 802
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Delete a Figma variable collection and ALL its variables. WARNING: This is a destructive operation that deletes all variables in the collection and cannot be undone (except with Figma's undo). Requires the Desktop Bridge plugin to be running."
+ },
+ {
+  "name": "figma_rename_variable",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 483,
+  "handler_lines": 57,
+  "connector_methods": [
+   "renameVariable"
+  ],
+  "plugin_commands": [
+   "RENAME_VARIABLE"
+  ],
+  "plugin_handler_lines": {
+   "RENAME_VARIABLE": 842
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Rename an existing Figma variable. This updates the variable's name while preserving all its values and settings. Requires the Desktop Bridge plugin to be running."
+ },
+ {
+  "name": "figma_add_mode",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 542,
+  "handler_lines": 57,
+  "connector_methods": [
+   "addMode"
+  ],
+  "plugin_commands": [
+   "ADD_MODE"
+  ],
+  "plugin_handler_lines": {
+   "ADD_MODE": 915
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Add a new mode to an existing Figma variable collection. Modes allow variables to have different values for different contexts (e.g., Light/Dark themes, device sizes). Requires the Desktop Bridge plugin to be running."
+ },
+ {
+  "name": "figma_rename_mode",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 601,
+  "handler_lines": 66,
+  "connector_methods": [
+   "renameMode"
+  ],
+  "plugin_commands": [
+   "RENAME_MODE"
+  ],
+  "plugin_handler_lines": {
+   "RENAME_MODE": 954
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Rename an existing mode in a Figma variable collection. Requires the Desktop Bridge plugin to be running."
+ },
+ {
+  "name": "figma_batch_create_variables",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 676,
+  "handler_lines": 143,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create multiple variables in one operation. Use instead of calling figma_create_variable repeatedly — up to 50x faster for bulk operations. Get collection IDs from figma_get_variables first. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_batch_update_variables",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 821,
+  "handler_lines": 127,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Update multiple variable values in one operation. Use instead of calling figma_update_variable repeatedly — up to 50x faster for bulk updates. Get variable/mode IDs from figma_get_variables first. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_setup_design_tokens",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 950,
+  "handler_lines": 267,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a complete design token structure in one operation: collection, modes, and all variables. Ideal for importing CSS custom properties or design tokens into Figma. Values may be literals OR DTCG-style brace references ('{color.blue.600}', or set-qualified '{primitives.color.blue.600}') that resolve to variable ALIASES — first against variables created in this same call, then against existing local variables. Unresolvable references skip that value with a per-item warning (the rest of the batch still applies), so semantic collections referencing primitives no longer need raw figma_execute. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_instantiate_component",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1223,
+  "handler_lines": 119,
+  "connector_methods": [
+   "instantiateComponent"
+  ],
+  "plugin_commands": [
+   "INSTANTIATE_COMPONENT"
+  ],
+  "plugin_handler_lines": {
+   "INSTANTIATE_COMPONENT": 1899
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create an instance of a component from the design system.\n\n**CRITICAL: Always pass BOTH componentKey AND nodeId together!**\nSearch results return both identifiers. Pass both so the tool can automatically fall back to nodeId if the component isn't published to a library. Most local/unpublished components require nodeId.\n\n**IMPORTANT: Always re-search before instantiating!**\nNodeIds are session-specific and may be stale from previous conversations. ALWAYS search for components at the start of each design session to get current, valid identifiers.\n\n**VISUAL VALIDATION WORKFLOW:**\nAfter instantiating components, use figma_take_screenshot to verify the result looks correct. Check placement, sizing, and visual balance."
+ },
+ {
+  "name": "figma_set_description",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1348,
+  "handler_lines": 62,
+  "connector_methods": [
+   "setNodeDescription"
+  ],
+  "plugin_commands": [
+   "SET_NODE_DESCRIPTION"
+  ],
+  "plugin_handler_lines": {
+   "SET_NODE_DESCRIPTION": 2410
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Set the description text on a component, component set, or style. Descriptions appear in Dev Mode and help document design intent. Supports plain text and markdown formatting."
+ },
+ {
+  "name": "figma_add_component_property",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1412,
+  "handler_lines": 109,
+  "connector_methods": [
+   "addComponentProperty"
+  ],
+  "plugin_commands": [
+   "ADD_COMPONENT_PROPERTY"
+  ],
+  "plugin_handler_lines": {
+   "ADD_COMPONENT_PROPERTY": 2697
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Add a new component property to a component or component set. Properties enable dynamic content and behavior in component instances. Supported types: BOOLEAN (toggle), TEXT (string), INSTANCE_SWAP (component swap), VARIANT (variant selection), SLOT (freeform slot — prefer figma_create_slot for new slots)."
+ },
+ {
+  "name": "figma_edit_component_property",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1523,
+  "handler_lines": 77,
+  "connector_methods": [
+   "editComponentProperty"
+  ],
+  "plugin_commands": [
+   "EDIT_COMPONENT_PROPERTY"
+  ],
+  "plugin_handler_lines": {
+   "EDIT_COMPONENT_PROPERTY": 2759
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Edit an existing component property. Can change the name, default value, or preferred values (for INSTANCE_SWAP). Use the full property name including the unique suffix."
+ },
+ {
+  "name": "figma_delete_component_property",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1602,
+  "handler_lines": 56,
+  "connector_methods": [
+   "deleteComponentProperty"
+  ],
+  "plugin_commands": [
+   "DELETE_COMPONENT_PROPERTY"
+  ],
+  "plugin_handler_lines": {
+   "DELETE_COMPONENT_PROPERTY": 2798
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Delete a component property. Works with BOOLEAN, TEXT, INSTANCE_SWAP, and SLOT properties (not VARIANT). This is a destructive operation."
+ },
+ {
+  "name": "figma_resize_node",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1664,
+  "handler_lines": 62,
+  "connector_methods": [
+   "resizeNode"
+  ],
+  "plugin_commands": [
+   "RESIZE_NODE"
+  ],
+  "plugin_handler_lines": {
+   "RESIZE_NODE": 3117
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Resize a node to specific dimensions. By default respects child constraints; use withConstraints=false to ignore them."
+ },
+ {
+  "name": "figma_move_node",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1728,
+  "handler_lines": 50,
+  "connector_methods": [
+   "moveNode"
+  ],
+  "plugin_commands": [
+   "MOVE_NODE"
+  ],
+  "plugin_handler_lines": {
+   "MOVE_NODE": 3160
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Move a node to a new position within its parent."
+ },
+ {
+  "name": "figma_set_fills",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1780,
+  "handler_lines": 73,
+  "connector_methods": [
+   "setNodeFills"
+  ],
+  "plugin_commands": [
+   "SET_NODE_FILLS"
+  ],
+  "plugin_handler_lines": {
+   "SET_NODE_FILLS": 3200
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Set the fill colors on a node. Accepts hex color strings (e.g., '#FF0000'). To bind a fill to a design token / color variable, pass that fill's variableId — the variable drives the color and this works on any Figma plan via the bridge (no raw figma_execute needed)."
+ },
+ {
+  "name": "figma_set_image_fill",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1855,
+  "handler_lines": 48,
+  "connector_methods": [
+   "setImageFill"
+  ],
+  "plugin_commands": [
+   "SET_IMAGE_FILL"
+  ],
+  "plugin_handler_lines": {
+   "SET_IMAGE_FILL": 3267
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Set an image fill on one or more Figma nodes. The imageData parameter accepts a base64-encoded image string (JPEG/PNG). The image is decoded in the browser bridge and passed as raw bytes to the Figma plugin. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_set_strokes",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1905,
+  "handler_lines": 74,
+  "connector_methods": [
+   "setNodeStrokes"
+  ],
+  "plugin_commands": [
+   "SET_NODE_STROKES"
+  ],
+  "plugin_handler_lines": {
+   "SET_NODE_STROKES": 3334
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Set the stroke (border) on a node. Accepts hex color strings and optional stroke weight. To bind a stroke to a design token / color variable, pass that stroke's variableId — works on any Figma plan via the bridge."
+ },
+ {
+  "name": "figma_clone_node",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 1981,
+  "handler_lines": 48,
+  "connector_methods": [
+   "cloneNode"
+  ],
+  "plugin_commands": [
+   "CLONE_NODE"
+  ],
+  "plugin_handler_lines": {
+   "CLONE_NODE": 3481
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Duplicate a node. The clone is placed at a slight offset from the original."
+ },
+ {
+  "name": "figma_delete_node",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 2031,
+  "handler_lines": 48,
+  "connector_methods": [
+   "deleteNode"
+  ],
+  "plugin_commands": [
+   "DELETE_NODE"
+  ],
+  "plugin_handler_lines": {
+   "DELETE_NODE": 3520
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Delete a node from the canvas. WARNING: This is a destructive operation (can be undone with Figma's undo)."
+ },
+ {
+  "name": "figma_rename_node",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 2081,
+  "handler_lines": 49,
+  "connector_methods": [
+   "renameNode"
+  ],
+  "plugin_commands": [
+   "RENAME_NODE"
+  ],
+  "plugin_handler_lines": {
+   "RENAME_NODE": 3557
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Rename a node in the layer panel."
+ },
+ {
+  "name": "figma_set_text",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 2132,
+  "handler_lines": 67,
+  "connector_methods": [
+   "setTextContent"
+  ],
+  "plugin_commands": [
+   "SET_TEXT_CONTENT"
+  ],
+  "plugin_handler_lines": {
+   "SET_TEXT_CONTENT": 3593
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Set the text content of a text node. Optionally adjust font size and the font family/style. Font style names are space-sensitive ('Semi Bold', not 'SemiBold'), but this tool auto-corrects common no-space variants and falls back gracefully — so you don't need raw figma_execute to change typography."
+ },
+ {
+  "name": "figma_create_child",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 2201,
+  "handler_lines": 79,
+  "connector_methods": [
+   "createChildNode"
+  ],
+  "plugin_commands": [
+   "CREATE_CHILD_NODE"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_CHILD_NODE": 3655
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Create a new child node inside a parent container. Always place inside an existing Section or Frame — never on a bare page. If no suitable parent exists, create a Section first. Clean up any empty or orphaned nodes if the operation fails."
+ },
+ {
+  "name": "figma_arrange_component_set",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 2739,
+  "handler_lines": 93,
+  "connector_methods": [
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Organize a component set with Figma's native purple dashed visualization. Use after creating variants, adding states (hover/disabled/pressed), or when component sets need cleanup.\n\nNon-destructive: rearranges the existing variants in place (grid positions on the existing set's children), so the component set keeps its node ID and all placed instances remain intact. Arranges variants in a labeled grid (columns = last property like State, rows = other properties like Type+Size) and wraps the set in a white container with title, row/column labels. Safe to run on component sets with placed instances, and safe to re-run."
+ },
+ {
+  "name": "figma_create_component_set",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 2835,
+  "handler_lines": 211,
+  "connector_methods": [
+   "createComponentSet",
+   "executeCodeViaUI"
+  ],
+  "plugin_commands": [
+   "CREATE_COMPONENT_SET"
+  ],
+  "plugin_handler_lines": {
+   "CREATE_COMPONENT_SET": 2135
+  },
+  "execute_code": true,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [
+   "axe"
+  ],
+  "note": "",
+  "description": "Create a component set with variants in one call — replaces hand-written figma.combineAsVariants scripts.\n\nTwo modes:\n1. **Generate from a base component**: pass baseComponentId + properties (variant axes). The base is cloned for every combination of the axes ({ State: ['default','hover','disabled'], Size: ['sm','lg'] } → 6 variants), each named 'Prop=Value' comma-joined (e.g. 'State=hover, Size=sm'), then combined into a set. The base component itself becomes the FIRST variant (same node ID), so existing instances of the base survive as instances of that variant.\n2. **Combine existing components**: pass componentIds, optionally with variantProperties (aligned 1:1) to rename each component to Prop=Value form before combining.\n\nFigma derives the variant property definitions from the names; they live on the SET (componentPropertyDefinitions), not on individual variants. The result includes each variant's key — instantiate with a VARIANT's key/nodeId via figma_instantiate_component, not the set's key.\n\nSet autoArrange:true to lay the new set out as a labeled grid inside a white container (same layout as figma_arrange_component_set). Requires Desktop Bridge plugin.\n\nSIZE GUIDANCE: hard cap 100 variants. The timeout auto-scales with variant count (~1.2s/variant, 30s floor / 2min cap), but above ~40 variants the single-pass clone+combine gets slow and heavy base components may still push the limit — prefer splitting large matrices into multiple sets (e.g. one set per Size)."
+ },
+ {
+  "name": "figma_lint_design",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 3048,
+  "handler_lines": 59,
+  "connector_methods": [
+   "lintDesign"
+  ],
+  "plugin_commands": [
+   "LINT_DESIGN"
+  ],
+  "plugin_handler_lines": {
+   "LINT_DESIGN": 4110
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Run comprehensive accessibility (WCAG 2.2) and design quality checks on the current page or a specific node tree. WCAG conformance checks (10 rules): color contrast (AA), non-text contrast (1.4.11), color-only differentiation (1.4.1), focus indicators (2.4.7), touch targets (2.5.8), image alt text (1.1.1), heading hierarchy (1.3.1), reflow/responsive (1.4.10), reading order (1.3.2), and disabled context (4.1.2). Best-practice readability hints (opt-in via rules: ['best-practice'] or ['all']): text sizing, line height, letter spacing, paragraph spacing. Note: line/paragraph spacing below 1.5x/2x is NOT a WCAG 1.4.12 failure — 1.4.12 requires supporting user spacing overrides without breaking (a code concern, see figma_scan_code_accessibility), not specific design values — so these are non-normative hints scoped to multi-line text only. Design system checks (5 rules): hardcoded colors, missing text styles, default names, detached components, and token misuse (a semantic token bound to the wrong property, e.g. a bg/* or surface/* variable used as a text fill). Layout checks: missing auto-layout, empty containers. Default audit runs WCAG + design-system + layout (best-practice hints excluded). Returns categorized findings with severity levels (critical/warning/info) and WCAG conformance level (a/aa/aaa/best-practice) so teams can filter by target level. Use natural language like 'check my design for accessibility issues' or 'lint this page'. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_audit_component_accessibility",
+  "category": "PLUGIN",
+  "file": "src/core/write-tools.ts",
+  "line": 3109,
+  "handler_lines": 46,
+  "connector_methods": [
+   "auditComponentAccessibility"
+  ],
+  "plugin_commands": [
+   "AUDIT_COMPONENT_ACCESSIBILITY"
+  ],
+  "plugin_handler_lines": {
+   "AUDIT_COMPONENT_ACCESSIBILITY": 5324
+  },
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "",
+  "description": "Deep accessibility audit for a specific component or component set. Produces a scorecard covering: state coverage (default/hover/focus/disabled/error/active/loading), focus indicator quality and contrast, non-color differentiation (WCAG 1.4.1), target size consistency (WCAG 2.5.8), annotation completeness, and color-blind simulation (protanopia/deuteranopia/tritanopia). Returns per-category scores (0-100) and prioritized recommendations. Use after designing a component to validate accessibility before handoff. Requires Desktop Bridge plugin."
+ },
+ {
+  "name": "figma_audit_design_system_report",
+  "category": "HYBRID",
+  "file": "src/apps/design-system-dashboard/server.ts",
+  "line": 246,
+  "handler_lines": 185,
+  "connector_methods": [],
+  "plugin_commands": [],
+  "plugin_handler_lines": {},
+  "execute_code": false,
+  "rest_methods": [],
+  "rest_endpoints": [],
+  "local_markers": [],
+  "note": "fetchDesignSystemAuditData: cache -> Desktop Bridge -> REST fallback chain",
+  "description": "Run the design-system health audit and return the scored report as data (no UI required). Same deterministic engine as the Design System Dashboard app: naming & semantics, token architecture, component metadata, accessibility, consistency, coverage — each 0-100 plus a weighted overall. Start with the default summary, then drill into one category at a time via `category` (chunked; avoids one giant payload). Results are cached ~5 minutes; pass forceRefresh after editing the file. Every finding includes whether this MCP can fix it (design-side write tools vs. design decision vs. manual)."
+ }
+]
