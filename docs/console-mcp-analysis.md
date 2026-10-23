@@ -42,7 +42,7 @@ PLUGIN 的 82 个里再细分：
 5. `ui.html` 收到 `X_RESULT` 后按 requestId 找回 promise，再 `ws.send({id, result})` 回服务端。
 
 **figmosha2**
-1. 反过来：`bridge.py`（aiohttp）是服务端，`127.0.0.1:8787`，插件 UI 连 `ws://localhost:8787/plugin`，发 `hello`（文件名、docSig）；HTTP 侧 `POST /exec {code, target?, timeout}`。
+1. 反过来：`bridge.py`（aiohttp）是服务端，`127.0.0.1:18787`，插件 UI 连 `ws://localhost:18787/plugin`，发 `hello`（文件名、docSig）；HTTP 侧 `POST /exec {code, target?, timeout}`。
 2. 只有**一种**消息 `exec`：沙箱里 `new Function('figma','print','h', 'return (async () => { CODE })();')`，注入 `print`（日志批量流式回传）和 `h`（22 个辅助函数，含协作式取消 `h.ck()`）。结果只序列化一次（`valueJson` 原样拼进 WebSocket 帧）。
 3. 每个文件一条队列（文档级锁）、多文件路由（`-T`）、超时后的“遗留脚本”互锁，都在 bridge 里。
 

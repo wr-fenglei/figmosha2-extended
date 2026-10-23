@@ -9,7 +9,7 @@ WebSocket (the Figma plugin connects here once it's opened in Figma Desktop):
     WS   /plugin
 
 Run:
-    python bridge.py                 # default 127.0.0.1:8787
+    python bridge.py                 # default 127.0.0.1:18787
     python bridge.py --port 9000
     python bridge.py --host 0.0.0.0  # expose on LAN (not recommended)
 """
@@ -1005,7 +1005,7 @@ def main():
 
     ap = argparse.ArgumentParser(description="Figmosha 2.0 bridge server")
     ap.add_argument("--host", default="127.0.0.1", help="bind host (default 127.0.0.1)")
-    ap.add_argument("--port", type=int, default=8787, help="bind port (default 8787)")
+    ap.add_argument("--port", type=int, default=18787, help="bind port (default 18787)")
     args = ap.parse_args()
 
     if args.host in ("127.0.0.1", "localhost", "::1"):

@@ -9,12 +9,12 @@
 # that fallback is what most Macs get. Log: /tmp/figmosha-bridge.log
 #
 # Python: ./venv/bin/python if the venv exists, else $FIGMOSHA_PYTHON, else
-# python3 (macOS has no `python` command). Port: $FIGMOSHA_PORT, default 8787.
+# python3 (macOS has no `python` command). Port: $FIGMOSHA_PORT, default 18787.
 set -u
 cd "$(dirname "$0")"
 
 SESSION="figmosha-bridge"
-PORT="${FIGMOSHA_PORT:-8787}"
+PORT="${FIGMOSHA_PORT:-18787}"
 LOG="/tmp/figmosha-bridge.log"
 PIDFILE="/tmp/figmosha-bridge-$PORT.pid"
 
@@ -50,7 +50,8 @@ stop() {
             echo "[start-bridge] port $PORT is taken by another program."
         fi
         echo "[start-bridge] see what it is:  lsof -i tcp:$PORT     stop it:  lsof -ti tcp:$PORT | xargs kill"
-        echo "[start-bridge] or use another port:  FIGMOSHA_PORT=8788 bash start-bridge.sh"
+        echo "[start-bridge] or use another port:  FIGMOSHA_PORT=18788 bash start-bridge.sh"
+        echo "[start-bridge] also update the CLI port, plugin/ui.html and plugin/manifest.json; re-import the plugin."
         exit 1
     fi
     return $was

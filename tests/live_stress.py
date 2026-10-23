@@ -18,7 +18,7 @@ import time
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
-BRIDGE = "http://127.0.0.1:8787"
+BRIDGE = "http://127.0.0.1:18787"
 KEY = "figmosha-stress"
 RMW = (f"const v = +(figma.root.getPluginData('{KEY}') || 0);"
        # A pause so concurrent scripts genuinely overlap. Figma slows timers in

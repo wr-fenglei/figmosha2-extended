@@ -10,6 +10,14 @@ code it started with, so new helpers won't exist until you do. If
 
 ## [Unreleased]
 
+### Changed
+
+- Move the default local bridge port from 8787 to **18787** across the bridge,
+  CLI, macOS/Linux and Windows launchers, plugin WebSocket and manifest, examples,
+  and test helpers. Re-import `plugin/manifest.json` and re-run the plugin after
+  upgrading; the old manifest only allows the old port. Custom server/CLI port
+  options remain available and require matching plugin settings.
+
 ## [2.3.0] — 2026-10-06
 
 ### Changed

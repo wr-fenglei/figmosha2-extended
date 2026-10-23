@@ -65,7 +65,7 @@ Figmosha 2.0 keeps a plugin permanently open in Figma and exposes its Plugin API
 flowchart LR
     CLI("<b>figmosha.py</b><br/>curl · Claude Code<br/>any HTTP client")
 
-    BRIDGE("<b>bridge.py</b><br/>127.0.0.1:8787<br/>routes by <code>-T</code><br/>one lock per file")
+    BRIDGE("<b>bridge.py</b><br/>127.0.0.1:18787<br/>routes by <code>-T</code><br/>one lock per file")
 
     subgraph figma["Figma Desktop"]
         P1("<b>Figmosha Bridge</b><br/>File A")
@@ -166,7 +166,7 @@ authentication beyond being on the machine.
 | `WS /plugin` | — | where the Figma plugin connects (one per open file) |
 
 ```bash
-curl -s -X POST http://localhost:8787/exec \
+curl -s -X POST http://localhost:18787/exec \
   -H 'Content-Type: application/json' \
   -d '{"code":"return figma.currentPage.name"}'
 ```
@@ -191,7 +191,7 @@ and how many are open.
 ```bash
 python figmosha.py targets                          # name / doc id / fileKey / conn / queue
 python figmosha.py exec "return figma.root.name" -T "Component Library"
-curl -s -X POST http://localhost:8787/exec -d '{"code":"...","target":"Component Library"}'
+curl -s -X POST http://localhost:18787/exec -d '{"code":"...","target":"Component Library"}'
 ```
 
 Target resolution: document id (`doc` in `targets`) → connection id → exact
@@ -318,7 +318,7 @@ bash start-bridge.sh        # background (tmux session if tmux is installed); --
 ./venv/bin/python bridge.py # …or just keep a terminal open
 ```
 
-The server listens on `127.0.0.1:8787`. Import and run the plugin as described above, then check it:
+The server listens on `127.0.0.1:18787`. Import and run the plugin as described above, then check it:
 
 ```bash
 ./venv/bin/python figmosha.py status
@@ -327,6 +327,22 @@ The server listens on `127.0.0.1:8787`. Import and run the plugin as described a
 ./venv/bin/python figmosha.py "return figma.currentPage.name"
 # → "Page 1"
 ```
+
+**Ports and restarting.** The bridge, launchers, CLI and plugin default to fixed
+port **18787**, on loopback only. After reboot, run `bash start-bridge.sh` again
+(or `.\start-bridge.ps1` on Windows). Running `figmosha.py` does not start the
+bridge, and these scripts do not install an automatic startup service. You can
+invoke `./venv/bin/python figmosha.py` from the checkout without activating the
+venv or adding a `figmosha` command to PATH.
+
+For a custom port, set `FIGMOSHA_PORT` when using the shell launcher and CLI
+(or pass `--port` to `bridge.py` / `figmosha.py`, before the CLI subcommand).
+The Windows launcher accepts `-Port`. These options do **not** change the plugin:
+update `SERVER` in `plugin/ui.html` and both `networkAccess.allowedDomains`
+entries in `plugin/manifest.json` to the same port. Bump `PLUGIN_VERSION` and
+update the fingerprint as described in `AGENTS.md`, then **re-import the manifest
+and run the plugin again**. When upgrading from the old default port, 8787,
+re-import the updated manifest even if the plugin was already installed.
 
 **WSL2**: `localhost` ports forward to the Windows host automatically, so a bridge inside WSL is reachable from Figma on Windows. But Figma can only import a plugin from a Windows path — copy it out first:
 
@@ -364,7 +380,7 @@ python figmosha.py exec --file my-script.js
 cat my-script.js | python figmosha.py exec --stdin
 
 # Plain HTTP (no Python needed)
-curl -s http://localhost:8787/exec \
+curl -s http://localhost:18787/exec \
   -H 'Content-Type: application/json' \
   -d '{"code":"return 1+1"}'
 ```

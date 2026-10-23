@@ -24,12 +24,12 @@ python figmosha.py text 185:21880 "Привіт"
 python figmosha.py variant 185:21883 "Property 1=Default"
 
 # Quick HTTP (no Python needed)
-curl -s -X POST http://localhost:8787/exec \
+curl -s -X POST http://localhost:18787/exec \
   -H 'Content-Type: application/json' \
   -d '{"code":"return figma.currentPage.id"}'
 
 # Status
-curl -s http://localhost:8787/status   # {"plugin_connected": ..., "files": [...], "pending": 0, "abandoned": []}
+curl -s http://localhost:18787/status   # {"plugin_connected": ..., "files": [...], "pending": 0, "abandoned": []}
 ```
 
 ## Multiple files: targets (`-T`) — READ THIS FIRST
@@ -38,12 +38,12 @@ The bridge holds **one connection per open Figma file** that is running the plug
 
 ```bash
 python figmosha.py targets                      # name / doc id / fileKey / conn / queue (busy, waiting)
-curl -s http://localhost:8787/targets
+curl -s http://localhost:18787/targets
 
 # -T is a per-subcommand flag — it goes AFTER the subcommand, never before it
 python figmosha.py exec "return figma.root.name" -T "Component Library"
 python figmosha.py tree 123:456 -T "Component Library"
-curl -s -X POST http://localhost:8787/exec -d '{"code":"...","target":"Icons"}'
+curl -s -X POST http://localhost:18787/exec -d '{"code":"...","target":"Icons"}'
 ```
 
 `target` matching (`resolve_target` in `bridge.py`): document id (the `doc` column, 6+ chars) →
@@ -112,7 +112,7 @@ writer. The interlock lifts by itself when the orphan finally replies (logged `[
 
 ```bash
 python figmosha.py clear -T "Component Library"   # drop the interlock
-curl -s -X POST http://localhost:8787/clear -d '{"target":"Component Library"}'
+curl -s -X POST http://localhost:18787/clear -d '{"target":"Component Library"}'
 ```
 
 `{"force": true}` pushes past the interlock if you know the orphan is harmless. `GET /status` reports
@@ -330,6 +330,14 @@ tail -f /tmp/figmosha-bridge.log     # watch it (or: tmux attach -t figmosha-bri
 No tmux needed: with tmux installed it runs in a detached session `figmosha-bridge`, otherwise as a
 plain background process (stock macOS). It uses `./venv/bin/python`, else `$FIGMOSHA_PYTHON`, else
 `python3`, and waits up to 10 s for the bridge to answer.
+
+The fixed default is **18787**, including the CLI and plugin. Restart the bridge
+with this script after reboot; the CLI does not start it automatically. A custom
+`FIGMOSHA_PORT` (shell launcher / CLI), `--port` (bridge / CLI) or `-Port` (Windows
+launcher) must also be reflected in `plugin/ui.html` and both allowed domains in
+`plugin/manifest.json`. Follow the plugin version/fingerprint instructions below,
+then re-import the manifest and re-run the plugin. Changing only the server port
+leaves the plugin pointing at the old port.
 
 **Native Windows** — no bash or tmux needed:
 

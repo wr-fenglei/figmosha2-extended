@@ -47,7 +47,7 @@ import urllib.request
 # 127.0.0.1, not "localhost": on Windows "localhost" tries ::1 first, and against a
 # bridge that only listens on IPv4 every call stalls ~2 s before falling back.
 DEFAULT_HOST = os.environ.get("FIGMOSHA_HOST", "127.0.0.1")
-DEFAULT_PORT = int(os.environ.get("FIGMOSHA_PORT", "8787"))
+DEFAULT_PORT = int(os.environ.get("FIGMOSHA_PORT", "18787"))
 
 HOST = DEFAULT_HOST
 PORT = DEFAULT_PORT

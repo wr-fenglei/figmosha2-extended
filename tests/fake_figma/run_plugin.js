@@ -3,7 +3,7 @@
 // the bridge, relaying messages to and from code.js).
 //
 //   node --experimental-websocket tests/fake_figma/run_plugin.js \
-//        --port 8787 [--name "Mock File"] [--setup setup.js]
+//        --port 18787 [--name "Mock File"] [--setup setup.js]
 //
 // Prints "READY <name>" once the bridge has the hello.
 'use strict';
@@ -14,7 +14,7 @@ const { createMockFigma } = require('./mock_figma');
 
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
-const port = Number(opt('--port', '8787'));
+const port = Number(opt('--port', '18787'));
 const name = opt('--name', 'Mock File');
 const editorType = opt('--editor', 'figma');
 const pluginDir = path.resolve(__dirname, '..', '..', 'plugin');

@@ -112,7 +112,7 @@ def test_request_with_origin_is_refused():
 def test_unexpected_host_is_refused():
     async def go():
         c = await make_client()
-        bridge.ALLOWED_HOSTS = {"localhost:8787"}
+        bridge.ALLOWED_HOSTS = {"localhost:18787"}
         r = await c.get("/status", headers={"Host": "evil.example"})
         assert r.status == 403
         assert "Host" in (await r.json())["error"]

@@ -161,21 +161,21 @@ def test_duplicate_and_late_results_are_ignored():
 @pytest.mark.parametrize("headers", [
     {"Origin": "https://evil.example"},
     {"Origin": "null"},                                   # null is for the plugin WS only
-    {"Origin": "http://localhost:8787"},                  # even "same-looking" origins
+    {"Origin": "http://localhost:18787"},                  # even "same-looking" origins
     {"Host": "evil.example"},
-    {"Host": "localhost.evil.example:8787"},
-    {"Host": "127.0.0.1.nip.io:8787"},                    # DNS rebinding style
+    {"Host": "localhost.evil.example:18787"},
+    {"Host": "127.0.0.1.nip.io:18787"},                    # DNS rebinding style
     {"Host": "localhost:9999"},
     {"Host": ""},
 ])
 def test_guard_refuses_browser_and_rebinding_requests(headers):
     async def go():
         c = await make_client()
-        h = {"Host": "127.0.0.1:8787", **headers}
+        h = {"Host": "127.0.0.1:18787", **headers}
         async with SandboxPlugin(c, "A", "docAAAAAA") as p:
-            # Pin the Host check the way main() does for a real bridge on 8787
+            # Pin the Host check the way main() does for a real bridge on 18787
             # (after the test plugin is connected, which uses the test port).
-            bridge.ALLOWED_HOSTS = {"localhost:8787", "127.0.0.1:8787", "[::1]:8787"}
+            bridge.ALLOWED_HOSTS = {"localhost:18787", "127.0.0.1:18787", "[::1]:18787"}
             for method, path, data in (("GET", "/status", None),
                                        ("POST", "/exec", json.dumps({"code": json.dumps({"op": "rmw"})})),
                                        ("POST", "/clear", "{}")):

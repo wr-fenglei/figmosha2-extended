@@ -7,7 +7,7 @@
   "editorType": ["figma", "figjam"],
   "permissions": ["teamlibrary", "activeusers", "fileusers", "currentuser"],
   "networkAccess": {
-    "allowedDomains": ["http://localhost:8787", "ws://localhost:8787"],
+    "allowedDomains": ["http://localhost:18787", "ws://localhost:18787"],
     "reasoning": "Local bridge to the Figmosha CLI server running on the user's machine."
   }
 }

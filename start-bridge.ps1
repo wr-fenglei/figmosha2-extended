@@ -13,7 +13,7 @@
 # ANSI, so a single em dash or arrow breaks parsing of the whole file.
 
 param(
-    [int]$Port = 8787,
+    [int]$Port = 18787,
     [switch]$Restart,
     [switch]$Stop
 )
