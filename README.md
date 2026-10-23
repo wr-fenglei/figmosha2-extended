@@ -328,12 +328,63 @@ The server listens on `127.0.0.1:18787`. Import and run the plugin as described 
 # → "Page 1"
 ```
 
-**Ports and restarting.** The bridge, launchers, CLI and plugin default to fixed
-port **18787**, on loopback only. After reboot, run `bash start-bridge.sh` again
-(or `.\start-bridge.ps1` on Windows). Running `figmosha.py` does not start the
-bridge, and these scripts do not install an automatic startup service. You can
-invoke `./venv/bin/python figmosha.py` from the checkout without activating the
-venv or adding a `figmosha` command to PATH.
+**Optional user-level CLI (macOS / Linux / WSL).** After creating the venv,
+install the convenience entry point once:
+
+```bash
+./venv/bin/python install-cli.py
+# From any directory, when ~/.local/bin is on PATH:
+figmosha --help
+figmosha --version
+figmosha status
+figmosha doctor
+```
+
+The installer creates only `~/.local/bin/figmosha`, a symlink to this checkout's
+`bin/figmosha`. It refuses to overwrite or shadow another command and does not
+edit shell profiles. If that directory is absent from PATH, use
+`~/.local/bin/figmosha` directly or add it to your shell PATH. Keep this checkout
+and its venv in place; no activation or `cd` is needed, and relative `--file`
+paths still resolve from your current directory.
+
+**Ports and restarting.** The fixed default is **18787**, on loopback only.
+The installed `figmosha` command starts this checkout's bridge on demand, or
+reuses its healthy running instance. After reboot, just run `figmosha status`
+(or another command that needs the bridge). Help, version, `--print-js`, and
+argument-parse errors do not start it. Direct `./venv/bin/python figmosha.py`
+remains a client without automatic startup; native Windows can still use
+`.\start-bridge.ps1`. No login/startup service is installed.
+
+Startup checks both IPv4 and IPv6 and verifies the Figmosha service marker,
+checkout identity and process instance before use. A per-user, per-port lock
+serializes concurrent starts. Lock wait plus startup is limited to 10 seconds;
+failure cleanup can add up to 2 seconds. An occupied port, old/incompatible
+bridge or stale build produces an error, never a killed port owner. A manually
+started current bridge can be reused, but the controller will not stop it.
+For an old manually started bridge, verify its process and restart it explicitly
+before using this entry point. The entry point never opens the Figma plugin or
+changes design files by itself.
+
+Automatically started bridges write logs and instance records to
+`${XDG_STATE_HOME:-~/.local/state}/figmosha/bridge-<port>.log` and `.json`.
+Manual `start-bridge.sh` processes still log to `/tmp/figmosha-bridge.log`.
+To stop a bridge created by the new entry point, from this checkout run:
+
+```bash
+./venv/bin/python bridge_control.py stop --port 18787
+```
+
+It signals only an instance matching its saved checkout, PID and instance id.
+It refuses mismatched/unknown services and does not force-stop an unresponsive
+process. To uninstall the command, run:
+
+```bash
+./venv/bin/python install-cli.py --uninstall
+```
+
+This removes only this checkout's symlink; it leaves the checkout, venv, logs and
+running bridge intact. Stop the managed bridge first if desired. For a custom
+installation directory, pass the same `--bin-dir` on install and uninstall.
 
 For a custom port, set `FIGMOSHA_PORT` when using the shell launcher and CLI
 (or pass `--port` to `bridge.py` / `figmosha.py`, before the CLI subcommand).
@@ -475,7 +526,7 @@ chain and tells you which link is broken.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `connection refused` from CLI | Server not running | `bash start-bridge.sh`, or `.\start-bridge.ps1` on Windows |
+| `connection refused` from direct CLI | Server not running | Use installed `figmosha` for on-demand startup, `bash start-bridge.sh`, or `.\start-bridge.ps1` on Windows |
 | `plugin not connected` (503) | Plugin window closed | Plugins → Development → Figmosha Bridge → Run |
 | Plugin says `Reconnecting…` | Server is down or restarting | Start it; plugin auto-reconnects within 2 s |
 | 504 timeout | Code threw silently or `await` never resolved | Close the plugin (X), Run again. Increase `--timeout` for legitimately long ops |
@@ -498,6 +549,10 @@ chain and tells you which link is broken.
 ```
 bridge.py              HTTP/WS server: routing, per-file queue, guard, version checks, error hints
 figmosha.py            CLI client and subcommands
+bin/figmosha           symlink-friendly venv entry point (preserves caller directory)
+figmosha_launcher.py   enables on-demand startup after argument parsing
+bridge_control.py     verified, locked, bounded bridge startup / safe stop
+install-cli.py        user-level symlink install / uninstall
 start-bridge.sh        background bridge start / restart / --stop (macOS / Linux / WSL)
 start-bridge.ps1       detached launcher for native Windows (-Restart / -Stop)
 requirements.txt       runtime dependency (aiohttp); requirements-dev.txt adds pytest

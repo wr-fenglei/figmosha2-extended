@@ -39,6 +39,8 @@ Helpers available inside exec'd code (as `h.*`):
 import argparse
 import json
 import os
+from pathlib import Path
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -89,12 +91,17 @@ def node_expr(id_or_alias):
 
 
 def _request(method, path, payload=None, timeout=65):
-    url = f"http://{HOST}:{PORT}{path}"
+    address = f"[{HOST}]" if ":" in HOST and not HOST.startswith("[") else HOST
+    url = f"http://{address}:{PORT}{path}"
     data = json.dumps(payload).encode("utf-8") if payload is not None else None
     headers = {"Content-Type": "application/json"} if data else {}
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
+        # Local bridge requests must stay local even when a shell has HTTP proxies.
+        opener = (urllib.request.build_opener(urllib.request.ProxyHandler({}))
+                  if HOST in {"127.0.0.1", "localhost", "::1", "[::1]"}
+                  else urllib.request.build_opener())
+        with opener.open(req, timeout=timeout) as r:
             return r.status, json.loads(r.read() or b"{}")
     except urllib.error.HTTPError as e:
         body = e.read() or b"{}"
@@ -452,6 +459,8 @@ def _add_common_flags(p):
 def build_parser():
     ap = argparse.ArgumentParser(prog="figmosha", description=__doc__.splitlines()[0],
                                   formatter_class=argparse.RawDescriptionHelpFormatter)
+    version = re.search(r'^VERSION = "([^"]+)"', Path(__file__).with_name("bridge.py").read_text(), re.MULTILINE).group(1)
+    ap.add_argument("--version", action="version", version=f"figmosha {version}")
     ap.add_argument("--host", default=DEFAULT_HOST,
                     help="bridge host (env FIGMOSHA_HOST)")
     ap.add_argument("--port", type=int, default=DEFAULT_PORT,
@@ -534,7 +543,7 @@ def _add_common_flags_ext(p):
                    help="print the generated Plugin API code instead of running it")
 
 
-def main():
+def main(ensure_bridge=None):
     force_utf8_output()
 
     # Backward-compat shorthand: `figmosha "<js>"` → `figmosha exec "<js>"`
@@ -559,6 +568,9 @@ def main():
     PARALLEL = getattr(args, "parallel", False)
     AGENT = getattr(args, "agent", None) or AGENT
     QUEUE_TIMEOUT = getattr(args, "queue_timeout", None)
+
+    if ensure_bridge is not None and not getattr(args, "print_js", False):
+        ensure_bridge(HOST, PORT)
 
     if figmosha_ext is not None and figmosha_ext.is_ext(args):
         sys.exit(figmosha_ext.run(args, _exec, _emit))

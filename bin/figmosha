@@ -1,0 +1,14 @@
+#!/bin/sh
+# Resolve a user-level symlink without changing the caller's working directory.
+SOURCE=$0
+while [ -L "$SOURCE" ]; do
+    DIR=$(CDPATH= cd -- "$(dirname -- "$SOURCE")" && pwd -P) || exit 2
+    LINK=$(readlink "$SOURCE") || exit 2
+    case $LINK in /*) SOURCE=$LINK ;; *) SOURCE=$DIR/$LINK ;; esac
+done
+ROOT=$(CDPATH= cd -- "$(dirname -- "$SOURCE")/.." && pwd -P) || exit 2
+if [ ! -x "$ROOT/venv/bin/python" ]; then
+    echo "figmosha: missing $ROOT/venv/bin/python; create the project venv first." >&2
+    exit 2
+fi
+exec "$ROOT/venv/bin/python" "$ROOT/figmosha_launcher.py" "$@"

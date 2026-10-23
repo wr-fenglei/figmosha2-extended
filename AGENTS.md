@@ -331,8 +331,18 @@ No tmux needed: with tmux installed it runs in a detached session `figmosha-brid
 plain background process (stock macOS). It uses `./venv/bin/python`, else `$FIGMOSHA_PYTHON`, else
 `python3`, and waits up to 10 s for the bridge to answer.
 
-The fixed default is **18787**, including the CLI and plugin. Restart the bridge
-with this script after reboot; the CLI does not start it automatically. A custom
+The fixed default is **18787**, including the CLI and plugin. The direct
+`./venv/bin/python figmosha.py` client does not start the bridge automatically.
+On macOS / Linux / WSL, `./venv/bin/python install-cli.py` installs a user-level
+`figmosha` entry point using this checkout's venv; it works from any directory
+and starts or reuses this checkout's verified bridge on demand. Help/version and
+`--print-js` stay offline. It uses a per-port lock and bounded startup, refuses
+unknown port owners, and installs no login service. Automatically started bridge
+logs/records are under `${XDG_STATE_HOME:-~/.local/state}/figmosha/`; manual shell
+launcher logs remain in `/tmp`. Use `./venv/bin/python bridge_control.py stop`
+only for a controller-started instance, and `./venv/bin/python install-cli.py
+--uninstall` to remove this checkout's command symlink. See README for details.
+A custom
 `FIGMOSHA_PORT` (shell launcher / CLI), `--port` (bridge / CLI) or `-Port` (Windows
 launcher) must also be reflected in `plugin/ui.html` and both allowed domains in
 `plugin/manifest.json`. Follow the plugin version/fingerprint instructions below,

@@ -61,6 +61,8 @@ def _file_digest(path: Path):
 
 
 BRIDGE_DIGEST = _file_digest(Path(__file__).resolve())
+CHECKOUT_ID = hashlib.sha256(str(HERE).encode()).hexdigest()
+INSTANCE_ID = uuid.uuid4().hex
 
 
 def expected_plugin_version():
@@ -909,6 +911,10 @@ async def status_handler(request: web.Request) -> web.Response:
 
     files = _files_payload()
     return web.json_response({
+        "service": "figmosha-bridge",
+        "checkout_id": CHECKOUT_ID,
+        "instance_id": INSTANCE_ID,
+        "pid": os.getpid(),
         "version": VERSION,
         "plugin_connected": len(files) > 0,
         "plugin_version": expected_plugin_version(),

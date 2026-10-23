@@ -10,6 +10,17 @@ code it started with, so new helpers won't exist until you do. If
 
 ## [Unreleased]
 
+### Added
+
+- A user-level `figmosha` entry point for macOS/Linux/WSL, using the project venv
+  from any directory. It starts the local bridge only for network commands,
+  checks service/checkout/instance identity, serializes concurrent starts, and
+  reports bounded failures without killing unrelated port owners. Help, version
+  and generated-JS output stay offline. Includes safe managed-instance stop,
+  reversible symlink installation, usage/uninstall docs and lifecycle tests.
+- Additive bridge status identity fields for safe client reuse: `service`,
+  `checkout_id`, `instance_id`, and `pid`.
+
 ### Changed
 
 - Move the default local bridge port from 8787 to **18787** across the bridge,
